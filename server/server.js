@@ -2,18 +2,30 @@ import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import formidable from "formidable";
-import session from "express-sesion";
+import formidableMiddleware from "express-formidable";
+import session from "express-session";
 import passport from "passport"; 
 import passportLocalMongoose from "passport-local-mongoose";
 import {Strategy as GoogleStrategy} from "passport-google-oauth20";
 import FacebookStrategy from "passport-facebook";
-import findorCreate from "mongoose-findorcreate";
+import findOrCreate from "mongoose-findorcreate";
 
 const app = express();
 const port = 5000;
 
 app.use(cors());
+app.use(formidableMiddleware());
+
+// setting up user authentication
+app.use(session({
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 mongoose.connect(process.env.DB)
   .then(() => {
@@ -25,8 +37,8 @@ mongoose.connect(process.env.DB)
 
 const postSchema = new mongoose.Schema({
   text:String,
-  likes:Nummber,
-  comments: [postSchema],
+  likes:Number,
+  comments: [String], // Store the comments in an array with as the comment id 
   image:String,
 });
 
@@ -34,12 +46,32 @@ const userSchema = new mongoose.Schema({
    email:String,
    password:String,
    googleId:String,
-   posts:[postShema],
+   posts:[String], // Store user posts in an array with the post id
    profilepic:String
 });
 
+userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(findOrCreate);
+
 const User = mongoose.model("user", userSchema);
 const Post = mongoose.model("post", postSchema);
+
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+passport.use(new FacebookStrategy({
+  clientID: process.env.APP_ID,
+  clientSecret: process.env.APP_SECRET,
+  callbackURL: "http://localhost:3000/auth/facebook/home"
+}, 
+(accesstoken, refreshToken, profile, cb) => {
+   User.findOrCreate({facebook:profile.id}, (err, user) => {
+     return cb(err,user);
+   })
+}
+));
 
 
 
@@ -48,5 +80,5 @@ app.get('/api', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`API server is running  on porti ${port}`)
+    console.log(`API server is running  on port ${port}`)
 });
