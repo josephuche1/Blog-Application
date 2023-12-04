@@ -9,10 +9,14 @@ import passportLocalMongoose from "passport-local-mongoose";
 import {Strategy as GoogleStrategy} from "passport-google-oauth20";
 import FacebookStrategy from "passport-facebook";
 import findOrCreate from "mongoose-findorcreate";
+import path from "path";
+import fs from "fs";
+import crypto from "crypto";
 
 const app = express();
 const port = 5000;
 let message;
+let gfs;
 
 app.use(cors());
 app.use(formidableMiddleware());
@@ -36,11 +40,20 @@ mongoose.connect(process.env.DB)
     console.log(`Failed to connect to database: ${err.message}`)
   });
 
+const conn = mongoose.connection;
+
+conn.once("open", () => {
+  gfs =new mongoose.mongo.GridFSBucket(conn.db, {
+    bucketName: 'postImages'
+  });
+});
+
 const postSchema = new mongoose.Schema({
   text:String,
   likes:Number,
   comments: [String], // Store the comments in an array with as the comment id 
   image:String,
+  timestamp:String
 });
 
 const userSchema = new mongoose.Schema({
@@ -83,7 +96,6 @@ app.get("/auth/facebook/home",
   passport.authenticate("facebook", { failureRedirect: "/login"}),
   (req,res) => {
     // successfully authenticated, redirect home
-    // TODO pass user as you redirect to home page
     res.redirect("/");
   });
 
@@ -149,7 +161,73 @@ app.post("/login", (req, res) => {
 });
 
 // Blog post API
+app.get("/posts/:id", async (req,res) => {
+  const post = await Post.findById(req.params.id);
+  if(post){
+    res.json({post});
+  } else{
+    res.json({message: `Post ${req.params.id} not found`});
+  }
+});
 
+app.post("/posts", async (req,res) => {
+    try{
+      if(req.files.image.name != ""){
+        const image = req.files.image;
+        const buf = crypto.randomBytes(16);
+        const filePath = buf.toString("hex")+path.extname(image.name);
+
+        const readStream = fs.createReadStream(image.path);
+
+        const uploadStream = gfsopenUploadStream(filePath, {
+          chunkSizeBytes:1048576,
+          metadata:{
+            name: image.name,
+            size:image.size,
+            type: image.type
+          }
+        });
+        readStream.pipe(uploadStream);
+        uploadStream.on("finish", async () => {
+          const newPost = new Post({
+            image:filePath,
+            text: req.fields.text,
+            likes: 0,
+            comments:[],
+            timestamp:new Date()
+          })
+          await newPost.save();
+          res.json(newPost);
+        })
+      } else{
+        const newPost = new Post({
+          text: req.fields.text,
+          likes: 0,
+          comments:[],
+          timestamp:new Date()
+        })
+        await newPost.save();
+        res.json(newPost);
+      }
+    } catch(err){
+       res.json({message: `An error has occured: ${err.messsage}`});
+    }
+});
+
+app.get("/posts", async (req,res) => {
+   try{
+    const posts = await Post.find({});
+    if(posts.length !== 0){
+       res.json(posts);
+    }
+    else{
+      res.json({message: "No posts yet"});
+    }
+   } catch(err){
+     res.status(500).json({error: err.message});
+   }
+   
+});
 
 app.get('/api', (req, res) => {
   res.json({ message: 'Hello from server!' });
