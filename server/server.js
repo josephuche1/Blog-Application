@@ -12,6 +12,7 @@ import findOrCreate from "mongoose-findorcreate";
 
 const app = express();
 const port = 5000;
+let message;
 
 app.use(cors());
 app.use(formidableMiddleware());
@@ -79,39 +80,48 @@ passport.use(new FacebookStrategy({
 app.get("/auth/facebook", passport.authenticate("facebook"));
 
 app.get("/auth/facebook/home", 
-  passport.authenticate("facebook", { failureRedirect: "Login"}),
+  passport.authenticate("facebook", { failureRedirect: "/login"}),
   (req,res) => {
     // successfully authenticated, redirect home
+    // TODO pass user as you redirect to home page
     res.redirect("/");
   });
+
+app.get("/", (req,res) =>{
+   if(req.isAuthenticated()){
+    res.json({userId:req.user._id});
+   } else {
+    res.redirect("/login");
+   }
+});
 
 app.post("/register", async (req,res) => {
    try{
      //Searching for users with the same username, trying to create users with the unique username
      const user = await User.findOne(({username: req.fields.email})); 
      if(user){
-      console.log("username already taken.")
-      res.redirect("/register");
+      message = "Username already taken";
+      res.redirect(`/register`)
      }
      if(req.fields.password  === req.fields.confirmPassword){
       User.register({username: req.body.email, email: req.fields.email, posts:[],profilepic:"default"}, req.fields.password, (err, user) => {
         if(err){
-          console.log(`An error occurred while signing up: ${err.message}`);
-          res.redirect("/");
+          message = `An error occurred while signing up: ${err.message}`;
+          res.redirect(`/register`);
         }
         else{
           passport.authenticate("local")(req, res, () => {
-              res.redirect(`/${req.body.username}`);
+              const userN = JSON.stringify(user);
+              res.redirect(`/`);
           })
         }
       })
      } else{
-      console.log("Password and Confirm PAssword must be the exact same.");
-      res.redirect("/register");
+      res.json({message: "'Password' and 'Confirm Password' must be the exact same."});
      }
    } catch(err) {
-     console.log(`An error occured: ${err.message}`);
-     res.status(500).send("An error in the server. please try again later.");
+       message = `An error has occurred: ${err.message}`;
+       res.redirect(`/register`);
    }
 });
 
@@ -123,7 +133,7 @@ app.post("/login", (req, res) => {
     });
     req.login(user, (err) => {
       if(err){
-        console.log(`An error occured while tryingto log in: ${err.message}`);
+        console.log(`An error occured while trying to log in: ${err.message}`);
         res.redirect("/login");
       } else{
         passport.authenticate("local", {
@@ -133,10 +143,12 @@ app.post("/login", (req, res) => {
       }
     })
   } catch(err){
-     console.log(`An error occured: ${err.message}`);
-     res.status(500).send("An error has occured. Please try again later");
+    message =`An error occured: ${err.message}`
+    res.redirect("/login");
   }
 });
+
+// Blog post API
 
 
 app.get('/api', (req, res) => {
