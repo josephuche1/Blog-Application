@@ -9,6 +9,7 @@ function App() {
       <BrowserRouter>
             <Routes>
                 <Route index exact path="/" element={<Home />} />
+                <Route path="/home" element={<Home />} />
                 <Route path="/login" element={<Login />} />
             </Routes>
      </BrowserRouter>

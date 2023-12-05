@@ -97,10 +97,10 @@ passport.use(new FacebookStrategy({
 app.get("/auth/facebook", passport.authenticate("facebook"));
 
 app.get("/auth/facebook/home", 
-  passport.authenticate("facebook", { failureRedirect: "/login"}),
+  passport.authenticate("facebook", { failureRedirect: "http://localhost:3000/login"}),
   (req,res) => {
     // successfully authenticated, redirect home
-    res.redirect("/");
+    res.redirect("http://localhost:3000/");
   });
 
 app.get("/", (req,res) =>{
@@ -118,18 +118,17 @@ app.post("/register", async (req,res) => {
      const user = await User.findOne(({username: req.fields.email})); 
      if(user){
       message = "Username already taken";
-      res.redirect(`/register`)
+      res.json({isAuthenticated: false, error:message})
      }
      if(req.fields.password  === req.fields.confirmPassword){
       User.register({username: req.body.email, email: req.fields.email, posts:[],profilepic:"default"}, req.fields.password, (err, user) => {
         if(err){
           message = `An error occurred while signing up: ${err.message}`;
-          res.redirect(`/register`);
+          res.json({isAuthenticated: false, error:message})
         }
         else{
           passport.authenticate("local")(req, res, () => {
-              const userN = JSON.stringify(user);
-              res.redirect(`/`);
+              res.json({user:user, isAuthenticated: true});
           })
         }
       })
@@ -138,7 +137,7 @@ app.post("/register", async (req,res) => {
      }
    } catch(err) {
        message = `An error has occurred: ${err.message}`;
-       res.redirect(`/register`);
+       res.json({isAuthenticated: false, error:message});
    }
 });
 
@@ -150,8 +149,7 @@ app.post("/login", (req, res) => {
     });
     req.login(user, (err) => {
       if(err){
-        console.log(`An error occured while trying to log in: ${err.message}`);
-        res.redirect("/login");
+        res.json({isAuthenticated: false, error:err.message});
       } else{
         passport.authenticate("local", {
           failureRedirect: "/login",
@@ -175,7 +173,7 @@ app.get("/api/posts/:id", async (req,res) => {
       res.json({message: `Post ${req.params.id} not found`});
     }
   } else{
-    res.redirect("/");
+    res.json({isAuthenticated: false});
   }
 });
 
