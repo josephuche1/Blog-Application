@@ -301,7 +301,7 @@ app.delete("/ap/posts/:id", async (req, res) => {
 });
 
 app.get("/api/isAuthenticated", (req,res) => {
-  console.log(req.user);
+  console.log("user is authenticated");
     if(req.isAuthenticated()){
       
       res.json({isAuthenticated: true});
