@@ -106,9 +106,9 @@ app.get("/auth/facebook/home",
 app.get("/", (req,res) =>{
    if(req.isAuthenticated()){
     console.log(req.user);
-    res.json({userId:req.user._id, isAuthenticated: true});
+    res.json({userId:req.user, isAuthenticated: true});
    } else {
-    res.redirect("/login");
+    res.json({isAuthenticated: false});
    }
 });
 
@@ -301,9 +301,8 @@ app.delete("/ap/posts/:id", async (req, res) => {
 });
 
 app.get("/api/isAuthenticated", (req,res) => {
-  console.log("user is authenticated");
+ 
     if(req.isAuthenticated()){
-      
       res.json({isAuthenticated: true});
     } else{
       res.json({isAuthenticated: false});
