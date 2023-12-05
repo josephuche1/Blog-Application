@@ -53,7 +53,8 @@ const postSchema = new mongoose.Schema({
   likes:Number,
   comments: [String], // Store the comments in an array with as the comment id 
   image:String,
-  timestamp:String
+  timestamp:String,
+  author: String
 });
 
 const userSchema = new mongoose.Schema({
@@ -101,7 +102,7 @@ app.get("/auth/facebook/home",
 
 app.get("/", (req,res) =>{
    if(req.isAuthenticated()){
-    res.json({userId:req.user._id});
+    res.json({userId:req.user._id, isAuthenticated: true});
    } else {
     res.redirect("/login");
    }
@@ -161,16 +162,20 @@ app.post("/login", (req, res) => {
 });
 
 // Blog post API
-app.get("/posts/:id", async (req,res) => {
-  const post = await Post.findById(req.params.id);
-  if(post){
-    res.json({post});
+app.get("/api/posts/:id", async (req,res) => {
+  if(req.isAuthenticated()){
+    const post = await Post.findById(req.params.id);
+    if(post){
+      res.json({post});
+    } else{
+      res.json({message: `Post ${req.params.id} not found`});
+    }
   } else{
-    res.json({message: `Post ${req.params.id} not found`});
+    res.redirect("/");
   }
 });
 
-app.post("/posts", async (req,res) => {
+app.post("/api/posts", async (req,res) => {
     try{
       if(req.files.image.name != ""){
         const image = req.files.image;
@@ -179,7 +184,7 @@ app.post("/posts", async (req,res) => {
 
         const readStream = fs.createReadStream(image.path);
 
-        const uploadStream = gfsopenUploadStream(filePath, {
+        const uploadStream = gfs.openUploadStream(filePath, {
           chunkSizeBytes:1048576,
           metadata:{
             name: image.name,
@@ -194,7 +199,8 @@ app.post("/posts", async (req,res) => {
             text: req.fields.text,
             likes: 0,
             comments:[],
-            timestamp:new Date()
+            timestamp:new Date(),
+            author:req.fields.author
           })
           await newPost.save();
           res.json(newPost);
@@ -214,7 +220,7 @@ app.post("/posts", async (req,res) => {
     }
 });
 
-app.get("/posts", async (req,res) => {
+app.get("/api/posts", async (req,res) => {
    try{
     const posts = await Post.find({});
     if(posts.length !== 0){
@@ -227,6 +233,75 @@ app.get("/posts", async (req,res) => {
      res.status(500).json({error: err.message});
    }
    
+});
+
+app.patch("/api/posts/:id", async (req,res) => {
+  const post = await Post.findById(req.params.id);
+  try{
+    if(req.files.image.name != ""){
+      if(post.image != "" || post.image){
+        const old =gfs.find({filename: post.image}).toArray();
+        if(post.length != 0){
+          await gfs.delete(old[0]._id);
+        }
+      }
+      const image = req.files.image;
+      const buf = crypto.randomBytes(16);
+      const filePath = buf.toString("hex")+path.extname(image.name);
+
+      const readStream = fs.createReadStream(image.path);
+
+      const uploadStream = gfs.openUploadStream(filePath, {
+        chunkSizeBytes:1048576,
+        metadata:{
+          name: image.name,
+          size:image.size,
+          type: image.type
+        }
+      });
+      readStream.pipe(uploadStream);
+      uploadStream.on("finish",async () => {
+        post.image = filePath;
+        await post.save();
+      })
+    } 
+    post.text = post.text || req.fields.text;
+    post.timestamp = new Date();
+    await post.save();
+    res.json(post);
+    
+  } catch(err){
+     res.json({message: `An error has occured: ${err.messsage}`});
+  }
+});
+
+app.delete("/ap/posts/:id", async (req, res) => {
+   try{
+     await Post.findById(req.params.id)
+        .then(async (post) => {
+          const image = await gfs.find({filename: post.image}).toArray();
+          if(image.length != 0){
+            await gfs.delete(image[0]._id);
+          }
+          await Post.findByIdAndDelete(req.params.id);
+          res.status(200).json({message: "Successfully deleted"});
+        })
+        .catch((err) => {
+          console.log(`Error: ${err.message}`)
+          res.json({message: `An error has occured.Please try again later`});
+        });
+   }catch(err){
+     console.log(`Error: ${err.message}`)
+     res.status(500).send(`We are fixing the problem right away. Please try again later`);
+   }
+});
+
+app.get("/api/isAuthenticated", (req,res) => {
+    if(req.isAuthenticated()){
+      res.json({isAuthenticated: true});
+    } else{
+      res.json({isAuthenticated: false});
+    }
 });
 
 app.get('/api', (req, res) => {
