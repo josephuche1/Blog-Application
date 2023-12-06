@@ -103,6 +103,8 @@ app.get("/auth/facebook/home",
     res.redirect("http://localhost:3000/");
   });
 
+
+
 app.get("/", (req,res) =>{
    if(req.isAuthenticated()){
     console.log(req.user);
