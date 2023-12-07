@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import Sidebar from '../components/Sidebar';
 import MiddleSection from '../components/MiddleSection';
+import OffCanvasSidebar from '../components/OffcanvasSidebar';
 
 const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -30,15 +31,20 @@ const Home = () => {
 
 
   return (
-    <div id="home" className="container ms-0 pb-0">
-       <div className="row">
-          <div className='col-1 p-0 border-end'>
-            <Sidebar />
+    <div id="home" className="container mx-0 position-fixed">
+        <div className="row">
+          <div className='col-0 col-md-4 p-0'>
+            <div className="d-none d-md-block">
+              <Sidebar />
+            </div>
+            <div className=" d-md-none d-block">
+              <OffCanvasSidebar />
+            </div>
           </div>
-          <div className='sidebar-home col-10 p-0 border d-flex justify-content-center'>
+          <div className='col-12 col-md-8 p-0 border-md-end middle'>
              <MiddleSection />
           </div>
-       </div>
+      </div>
     </div>
   );
 };
