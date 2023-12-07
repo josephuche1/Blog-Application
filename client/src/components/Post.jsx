@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 
 const Post = () => {
     return (
-       <Link to="#"className="post card container text-decoration-none w-100">
+       <Link to="#"className="post card container text-decoration-none w-100 border-0">
           <div className="row p-2">
              <div className="col-1 h-100 m-2">
                 <img src="https://picsum.photos/200" alt="profile" className="rounded-circle mx-auto" style={{width: "35px"}} />
