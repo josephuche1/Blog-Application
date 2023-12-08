@@ -6,7 +6,8 @@ const Sidebar = () => {
   <div className='sidebar'>
     <div className="sidebar-header mx-4 fs-3 fw-bold">Blog</div>
     <div className='d-flex flex-column px-5'>
-      <div className="my-2 mx-3">
+       
+      <div className="my-2 mx-3 ">
         <Link to="/home" className="text-decoration-none fw-bold fs-4 ">Home</Link>
       </div>
       <div className="my-2 mx-3">

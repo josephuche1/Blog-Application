@@ -6,8 +6,8 @@ import PostScrollSection from "./PostsScrollSection";
 const MiddleSection = () => {
     return (
         <div className="border position-fixed ps-0"> 
-          <div className="mini-navbar navbar container bg-body-secondary justify-content-center ps-0">
-            <div className="row row-cols-auto w-md-75 w-100 d-flex justify-content-between justify-content-md-center align-items-center flex-row ps-0">
+          <div className="mini-navbar navbar position-absolute container bg-body-secondary justify-content-center ps-0">
+            <div className="row w-md-75 w-100 d-flex justify-content-between justify-content-md-center align-items-center flex-row ps-0">
                 <div  className="d-md-none col-2 mx-0 pb-2">
                   <OffcanvasToggleButton />
                 </div>
