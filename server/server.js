@@ -117,13 +117,13 @@ app.get("/", (req,res) =>{
 app.post("/register", async (req,res) => {
    try{
      //Searching for users with the same username, trying to create users with the unique username
-     const user = await User.findOne(({username: req.fields.email})); 
+     const user = await User.findOne(({username: req.fields.username})); 
      if(user){
       message = "Username already taken";
       res.json({isAuthenticated: false, error:message})
      }
      if(req.fields.password  === req.fields.confirmPassword){
-      User.register({username: req.body.email, email: req.fields.email, posts:[],profilepic:"default"}, req.fields.password, (err, user) => {
+      User.register({username: req.body.username, posts:[], profilepic:"default"}, req.fields.password, (err, user) => {
         if(err){
           message = `An error occurred while signing up: ${err.message}`;
           res.json({isAuthenticated: false, error:message})
@@ -146,7 +146,7 @@ app.post("/register", async (req,res) => {
 app.post("/login", (req, res) => {
   try{
     const user = new user({
-      username: req.body.email,
+      username: req.body.username,
       password:req.body.password, 
     });
     req.login(user, (err) => {

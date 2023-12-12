@@ -10,30 +10,30 @@ const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   checkAuthentication();
-  // }, [navigate]);
+  useEffect(() => {
+    checkAuthentication();
+  }, [navigate]);
 
-  // async function checkAuthentication(){
-  //   await axios.get("http://localhost:5000/")
-  //   .then((response) => {
-  //     const data  = response.data;
-  //     if(data.isAuthenticated){
-  //        setIsAuthenticated(true);
-  //        navigate("/");
-  //     }
-  //     else{
-  //         navigate("/login");
-  //     }
-  //   })
-  //   .catch((err) => console.log(err));
-  // }
+  async function checkAuthentication(){
+    await axios.get("http://localhost:5000/")
+    .then((response) => {
+      const data  = response.data;
+      if(data.isAuthenticated){
+         setIsAuthenticated(true);
+         navigate("/");
+      }
+      else{
+          navigate("/login");
+      }
+    })
+    .catch((err) => console.log(err));
+  }
 
 
   return (
     <div id="home" className="container mx-0 position-fixed">
         <div className="row">
-          <div className='col-0 col-md-3 p-0'>
+          <div className='col-0 col-md-4 col-lg-3 p-0'>
             <div className="d-none d-md-block border-bottom">
               <Sidebar />
             </div>
