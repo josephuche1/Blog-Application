@@ -1,4 +1,4 @@
-import react from "react";
+import React from "react";
 
 const Login = () => {
   return (
@@ -15,7 +15,6 @@ const Login = () => {
              <input type="password" name="password" className="form-control" id="password" placeholder="Password" required />
           </div>
           <div className="my-1">
-            <small className="text-secondary fw-lighter">By click "submit" you agree to our Terms and Conditions</small>
             <input type="submit" className="btn btn-outline-primary w-100 my-3 " value="Log In" />
           </div>
         </form>
