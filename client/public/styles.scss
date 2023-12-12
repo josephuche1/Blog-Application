@@ -1,4 +1,8 @@
-$primary: green;
+$primary: #3498db;
+$secondary: #2ecc71;
+$light: #ecf0f1;
+
+
 
 #root{
     position:fixed;
@@ -8,14 +12,10 @@ $primary: green;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
 .home-profile-img{
     width:35px
 }
-
-a{
-    color: white
-}
-
 
 .mini-navbar{
     top: 0;
@@ -33,6 +33,5 @@ a{
 ::-webkit-scrollbar{
     display: none;
 }
-
 
 @import "../node_modules/bootstrap/scss/bootstrap.scss";

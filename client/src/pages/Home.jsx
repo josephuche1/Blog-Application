@@ -33,8 +33,8 @@ const Home = () => {
   return (
     <div id="home" className="container mx-0 position-fixed">
         <div className="row">
-          <div className='col-0 col-md-4 p-0'>
-            <div className="d-none d-md-block">
+          <div className='col-0 col-md-3 p-0'>
+            <div className="d-none d-md-block border-bottom">
               <Sidebar />
             </div>
             <div className=" d-md-none d-block">
