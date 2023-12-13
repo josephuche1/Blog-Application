@@ -1,6 +1,8 @@
 import React from "react";
 
 const Signup = () => {
+    
+    
     return (
         <div className="d-flex justify-content-center vw-100 border vh-100 align-items-center">
         <div className="w-25">
