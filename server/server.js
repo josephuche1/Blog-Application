@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import formidableMiddleware from "express-formidable";
+import formidable from "express-formidable";
 import session from "express-session";
 import passport from "passport"; 
 import passportLocalMongoose from "passport-local-mongoose";
@@ -19,10 +19,11 @@ let message;
 let gfs;
 
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "http://localhost:3000", // Replace with your frontend origin
   credentials: true
 }));
-app.use(formidableMiddleware());
+app.use(express.json());
+app.use(formidable());
 
 // setting up user authentication
 app.use(session({
@@ -103,7 +104,18 @@ app.get("/auth/facebook/home",
     res.redirect("http://localhost:3000/");
   });
 
-
+app.get("/findUser/:username" , async (req,res) => {
+  try{
+    const user = await User.findOne({username: req.params.username});
+    if(user){
+      res.json({isFound: true});
+    } else{
+      res.json({isFound: false});
+    }
+  } catch(err){
+    res.status(500).json({error: err.message});
+  }
+});
 
 app.get("/", (req,res) =>{
    if(req.isAuthenticated()){
@@ -114,33 +126,25 @@ app.get("/", (req,res) =>{
    }
 });
 
-app.post("/register", async (req,res) => {
-   try{
-     //Searching for users with the same username, trying to create users with the unique username
-     const user = await User.findOne(({username: req.fields.username})); 
-     if(user){
-      message = "Username already taken";
-      res.json({isAuthenticated: false, error:message})
-     }
-     if(req.fields.password  === req.fields.confirmPassword){
-      User.register({username: req.body.username, posts:[], profilepic:"default"}, req.fields.password, (err, user) => {
-        if(err){
-          message = `An error occurred while signing up: ${err.message}`;
-          res.json({isAuthenticated: false, error:message})
+app.post("/register", (req,res) => {
+  console.log(req.fields);
+  User.register({username: req.fields.username, profilepic:"default", posts:[]}, req.fields.password, (err, user) => {
+    if(err){
+      message = `An error occurred while signing up: ${err.message}`;
+      console.log(message);
+      res.status(500).json({isAuthenticated: false, error:message});
+    }
+    else{
+      req.login(user, (err) => {
+        if (err) {
+          console.error("Error logging in user:", err);
+          res.status(500).json({ isAuthenticated: false, error: err.message });
+        } else {
+          res.json({ isAuthenticated: true, user: user });
         }
-        else{
-          passport.authenticate("local")(req, res, () => {
-              res.json({user:user, isAuthenticated: true});
-          })
-        }
-      })
-     } else{
-      res.json({message: "'Password' and 'Confirm Password' must be the exact same."});
-     }
-   } catch(err) {
-       message = `An error has occurred: ${err.message}`;
-       res.json({isAuthenticated: false, error:message});
-   }
+      });
+    }
+  });
 });
 
 app.post("/login", (req, res) => {

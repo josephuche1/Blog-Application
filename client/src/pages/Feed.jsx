@@ -20,7 +20,7 @@ const Feed= () => {
       const data  = response.data;
       if(data.isAuthenticated){
          setIsAuthenticated(true);
-         navigate("/");
+         navigate("/feed");
       }
       else{
           navigate("/login");
