@@ -35,11 +35,11 @@ const Signup = () => {
           "Content-Type": "multipart/form-data"
         }
       }).then(res => {
-          console.log(res.data);
+          console.log("DATA: ", res.data);
           navigate("/feed");
         })
         .catch(err => {
-          console.log(err);
+          console.log("ERROR: ", err);
         })
     }
 

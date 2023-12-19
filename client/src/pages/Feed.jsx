@@ -7,23 +7,21 @@ import MiddleSection from '../components/MiddleSection';
 import OffCanvasSidebar from '../components/OffcanvasSidebar';
 
 const Feed= () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     checkAuthentication();
-  }, [navigate]);
+  }, []);
 
   async function checkAuthentication(){
     await axios.get("http://localhost:5000/")
     .then((response) => {
       const data  = response.data;
       if(data.isAuthenticated){
-         setIsAuthenticated(true);
          navigate("/feed");
       }
       else{
-          navigate("/login");
+        navigate("/login");
       }
     })
     .catch((err) => console.log(err));

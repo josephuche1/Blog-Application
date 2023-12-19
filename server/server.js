@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import formidable from "express-formidable";
 import session from "express-session";
-import passport from "passport"; 
+import passport, { Passport } from "passport"; 
 import passportLocalMongoose from "passport-local-mongoose";
 import {Strategy as GoogleStrategy} from "passport-google-oauth20";
 import FacebookStrategy from "passport-facebook";
@@ -126,26 +126,22 @@ app.get("/", (req,res) =>{
    }
 });
 
-app.post("/register", (req,res) => {
+app.post("/register", (req, res) => {
   console.log(req.fields);
-  User.register({username: req.fields.username, profilepic:"default", posts:[]}, req.fields.password, (err, user) => {
-    if(err){
-      message = `An error occurred while signing up: ${err.message}`;
+  const username = req.fields.username;
+  const password = req.fields.password;
+  User.register({ username: username},password, (err, user) => {
+    if (err) {
+      const message = `An error occurred while signing up: ${err.message}`;
       console.log(message);
-      res.status(500).json({isAuthenticated: false, error:message});
+      return res.status(500).json({ isAuthenticated: false, error: message });
     }
-    else{
-      req.login(user, (err) => {
-        if (err) {
-          console.error("Error logging in user:", err);
-          res.status(500).json({ isAuthenticated: false, error: err.message });
-        } else {
-          res.json({ isAuthenticated: true, user: user });
-        }
-      });
-    }
+    passport.authenticate("local")(req, res, () => {
+      res.json({ isAuthenticated: true, user: user });
+    });
   });
 });
+
 
 app.post("/login", (req, res) => {
   try{
@@ -157,9 +153,8 @@ app.post("/login", (req, res) => {
       if(err){
         res.json({isAuthenticated: false, error:err.message});
       } else{
-        passport.authenticate("local", {
-          failureRedirect: "/login",
-          successRedirect:"/"
+        passport.authenticate("local", () => {
+          res.json({isAuthenticated: true, user:user});
         })
       }
     })
