@@ -23,17 +23,15 @@ const Signup = () => {
 
     function handleSubmit(event){
       event.preventDefault();
-      const formData = new FormData();
-      formData.append("username", user.username);
-      formData.append("password", user.password);
+      console.log(user);
       axios.post("http://localhost:5000/register", {
         username: user.username,
         password: user.password,
         
       }, {
         headers: {
-          "Content-Type": "multipart/form-data"
-        }
+          "Content-Type": "application/json"
+        }, withCredentials: true 
       }).then(res => {
           console.log("DATA: ", res.data);
           navigate("/feed");

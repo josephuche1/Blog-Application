@@ -14,7 +14,7 @@ const Feed= () => {
   }, []);
 
   async function checkAuthentication(){
-    await axios.get("http://localhost:5000/")
+    await axios.get("http://localhost:5000/", {withCredentials: true})
     .then((response) => {
       const data  = response.data;
       if(data.isAuthenticated){
