@@ -34,4 +34,13 @@ $light: #ecf0f1;
     display: none;
 }
 
+.borderless{
+    border: none;
+    outline: none;
+}
+
+// .postForm{
+//     z-index: 2000 !important;
+// }
+
 @import "../node_modules/bootstrap/scss/bootstrap.scss";

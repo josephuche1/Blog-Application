@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
+
 const Sidebar = () => {
   return (
   <div className='sidebar'>
@@ -20,7 +20,7 @@ const Sidebar = () => {
         <Link to="/notifications" className="text-decoration-none fw-bold fs-4 ">Notifications</Link>
       </div>
       <div className="my-2 mx-3">
-        <Link to="/post" className="text-decoration-none btn btn-primary rounded-pill p-2 w-100 shadow">Post</Link>
+        <button className="text-decoration-none btn btn-primary rounded-pill p-2 w-100 shadow" data-bs-toggle="modal" data-bs-target="#postForm">Post</button>
       </div>
       <div className="dropdown">
         <div className="sidebar-footer p-3 fixed-bottom w-25 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
