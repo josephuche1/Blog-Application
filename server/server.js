@@ -181,7 +181,8 @@ app.get("/api/posts/:id", async (req,res) => {
 
 app.post("/api/posts", Formidable(), async (req,res) => {
     try{
-      if(req.files.image.name != ""){
+      console.log(req.fields);
+      if(req.files.image){
         const image = req.files.image;
         const buf = crypto.randomBytes(16);
         const filePath = buf.toString("hex")+path.extname(image.name);
@@ -217,7 +218,8 @@ app.post("/api/posts", Formidable(), async (req,res) => {
           timestamp:new Date()
         })
         await newPost.save();
-        res.json(newPost);
+        console.log(newPost);
+        res.json(newPost, {message: "success"});
       }
     } catch(err){
        res.json({message: `An error has occured: ${err.messsage}`});

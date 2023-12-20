@@ -2,8 +2,6 @@ $primary: #3498db;
 $secondary: #2ecc71;
 $light: #ecf0f1;
 
-
-
 #root{
     position:fixed;
     font-family: 'Gabarito', sans-serif;
@@ -11,6 +9,12 @@ $light: #ecf0f1;
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.borderless{
+    border: none;
+    outline: none;
+    resize:none;
 }
 
 .home-profile-img{
@@ -30,14 +34,12 @@ $light: #ecf0f1;
     width: 100%
 }
 
+
 ::-webkit-scrollbar{
     display: none;
 }
 
-.borderless{
-    border: none;
-    outline: none;
-}
+
 
 // .postForm{
 //     z-index: 2000 !important;

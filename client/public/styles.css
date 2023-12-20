@@ -8,6 +8,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.borderless {
+  border: none;
+  outline: none;
+  resize: none;
+}
+
 .home-profile-img {
   width: 35px;
 }
