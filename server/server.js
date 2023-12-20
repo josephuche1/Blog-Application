@@ -23,7 +23,7 @@ app.use(cors({
   origin: "http://localhost:3000", // Replace with your frontend origin
   credentials: true
 }));
-app.use(bodyParser.json())
+
 
 // setting up user authentication
 app.use(session({
@@ -90,40 +90,28 @@ passport.deserializeUser(async (id, done) => {
     });
 });
 
-// passport.use(new FacebookStrategy({
-//   clientID: process.env.APP_ID,
-//   clientSecret: process.env.APP_SECRET,
-//   callbackURL: "http://localhost:3000/auth/facebook/home",
-//   profileFields: ["id", "displayName", "photos", "email"]
-// }, 
-// (accesstoken, refreshToken, profile, cb) => {
-//    User.findOrCreate({facebook:profile.id, email:profile.email, username: profile.email}, (err, user) => {
-//      return cb(err,user);
-//    })
-// }
-// ));
+passport.use(new FacebookStrategy({
+  clientID: process.env.APP_ID,
+  clientSecret: process.env.APP_SECRET,
+  callbackURL: "http://localhost:3000/auth/facebook/home",
+  profileFields: ["id", "displayName", "photos", "email"]
+}, 
+(accesstoken, refreshToken, profile, cb) => {
+   User.findOrCreate({facebook:profile.id, email:profile.email, username: profile.email}, (err, user) => {
+     return cb(err,user);
+   })
+}
+));
 
-// app.get("/auth/facebook", passport.authenticate("facebook"));
+app.get("/auth/facebook", passport.authenticate("facebook"));
 
-// app.get("/auth/facebook/home", 
-//   passport.authenticate("facebook", { failureRedirect: "http://localhost:3000/login"}),
-//   (req,res) => {
-//     // successfully authenticated, redirect home
-//     res.redirect("http://localhost:3000/");
-//   });
+app.get("/auth/facebook/home", 
+  passport.authenticate("facebook", { failureRedirect: "http://localhost:3000/login"}),
+  (req,res) => {
+    // successfully authenticated, redirect home
+    res.redirect("http://localhost:3000/");
+  });
 
-// app.get("/findUser/:username" , async (req,res) => {
-//   try{
-//     const user = await User.findOne({username: req.params.username});
-//     if(user){
-//       res.json({isFound: true});
-//     } else{
-//       res.json({isFound: false});
-//     }
-//   } catch(err){
-//     res.status(500).json({error: err.message});
-//   }
-// });
 
 app.get("/", (req,res) =>{
    if(req.isAuthenticated()){
@@ -133,7 +121,7 @@ app.get("/", (req,res) =>{
    }
 });
 
-app.post("/register", (req, res) => {
+app.post("/register", bodyParser.json(), (req, res) => {
    try{
     console.log(req.body);
     const username = req.body.username;
@@ -149,15 +137,15 @@ app.post("/register", (req, res) => {
     });
    } catch(err){
       message =`An error occured: ${err.message}`
-      res.rjson({isAuthenticated: false, error: message});
+      res.json({isAuthenticated: false, error: message});
     
    }
 });
 
-
-app.post("/login", (req, res) => {
+app.post("/login", bodyParser.json(), (req, res) => {
   try{
-    const user = new user({
+    console.log(req.body);
+    const user = new User({
       username: req.body.username,
       password:req.body.password, 
     });
@@ -165,14 +153,15 @@ app.post("/login", (req, res) => {
       if(err){
         res.json({isAuthenticated: false, error:err.message});
       } else{
-        passport.authenticate("local", () => {
-          res.json({isAuthenticated: true, user:user});
-        })
+        passport.authenticate("local")(req, res, () => {
+          
+          res.json({isAuthenticated: true, user: user});
+        });
       }
     })
   } catch(err){
     message =`An error occured: ${err.message}`
-    res.redirect("/login");
+    res.json({isAuthenticated: false, error: message});
   }
 });
 
@@ -190,7 +179,7 @@ app.get("/api/posts/:id", async (req,res) => {
   }
 });
 
-app.post("/api/posts", async (req,res) => {
+app.post("/api/posts", Formidable(), async (req,res) => {
     try{
       if(req.files.image.name != ""){
         const image = req.files.image;
@@ -250,7 +239,7 @@ app.get("/api/posts", async (req,res) => {
    
 });
 
-app.patch("/api/posts/:id", async (req,res) => {
+app.patch("/api/posts/:id", Formidable(), async (req,res) => {
   const post = await Post.findById(req.params.id);
   try{
     if(req.files.image.name != ""){

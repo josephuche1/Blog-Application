@@ -23,12 +23,7 @@ const Signup = () => {
 
     function handleSubmit(event){
       event.preventDefault();
-      console.log(user);
-      axios.post("http://localhost:5000/register", {
-        username: user.username,
-        password: user.password,
-        
-      }, {
+      axios.post("http://localhost:5000/register", user, {
         headers: {
           "Content-Type": "application/json"
         }, withCredentials: true 
