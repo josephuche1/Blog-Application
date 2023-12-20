@@ -22,9 +22,14 @@ const Sidebar = () => {
       <div className="my-2 mx-3">
         <Link to="/post" className="text-decoration-none btn btn-primary rounded-pill p-2 w-100 shadow">Post</Link>
       </div>
-      <div className="sidebar-footer p-3 fixed-bottom w-25">
-        <img src="https://picsum.photos/300" alt="profile" className="rounded-circle mx-2" style={{width: "35px"}}/>
-        <span className="fs-5 fw-bold mx-3">Username</span>
+      <div className="dropdown">
+        <div className="sidebar-footer p-3 fixed-bottom w-25 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="https://picsum.photos/300" alt="profile" className="rounded-circle mx-2" style={{width: "35px"}}/>
+          <span className="fs-5 fw-bold mx-3">Username</span>
+        </div>
+        <ul className="dropdown-menu px-2 mx-5 w-100">
+          <Link to="http://localhost:5000/logout" className="text-decoration-none w-100 dropdown-item">Log out</Link>
+        </ul>
       </div>
     </div>
   </div>

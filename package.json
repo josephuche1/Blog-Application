@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "body-parser": "^1.20.2",
-    "express-formidable": "^1.2.0"
+    "body-parser": "^1.20.2"
   }
 }

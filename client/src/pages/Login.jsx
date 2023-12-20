@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 const Login = () => {
   return (
     <div className="d-flex justify-content-center vw-100 border vh-100 align-items-center">
-      <div className="w-25">
+      <div className="w-auto">
         <h1 className="text-center fw-bold">Login</h1>
         <form action="/login" method="post">
           <div className="my-3">

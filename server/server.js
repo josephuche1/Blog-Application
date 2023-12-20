@@ -127,27 +127,31 @@ passport.deserializeUser(async (id, done) => {
 
 app.get("/", (req,res) =>{
    if(req.isAuthenticated()){
-    console.log(req.user);
     res.json({userId:req.user, isAuthenticated: true});
    } else {
-    console.log("Not authenticated");
     res.json({isAuthenticated: false});
    }
 });
 
 app.post("/register", (req, res) => {
-  console.log(req.body);
-  const username = req.body.username;
-  const password = req.body.password;
-  User.register({ username: username},password, (err, user) => {
-    if (err) {
-      const message = `An error occurred while signing up: ${err.message}`;
-      res.json({isAuthenticated: false, error: message});
-    }
-    passport.authenticate("local")(req, res, function(){
-      res.json({isAuthenticated: true, user: user});
+   try{
+    console.log(req.body);
+    const username = req.body.username;
+    const password = req.body.password;
+    User.register({ username: username},password, (err, user) => {
+      if (err) {
+        const message = `An error occurred while signing up: ${err.message}`;
+        res.json({isAuthenticated: false, error: message});
+      }
+      passport.authenticate("local")(req, res, function(){
+        res.json({isAuthenticated: true, user: user});
+      });
     });
-  });
+   } catch(err){
+      message =`An error occured: ${err.message}`
+      res.rjson({isAuthenticated: false, error: message});
+    
+   }
 });
 
 
@@ -186,7 +190,7 @@ app.get("/api/posts/:id", async (req,res) => {
   }
 });
 
-app.post("/api/posts", Formidable(), async (req,res) => {
+app.post("/api/posts", async (req,res) => {
     try{
       if(req.files.image.name != ""){
         const image = req.files.image;
@@ -246,7 +250,7 @@ app.get("/api/posts", async (req,res) => {
    
 });
 
-app.patch("/api/posts/:id", Formidabble(), async (req,res) => {
+app.patch("/api/posts/:id", async (req,res) => {
   const post = await Post.findById(req.params.id);
   try{
     if(req.files.image.name != ""){

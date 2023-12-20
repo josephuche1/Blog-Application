@@ -33,8 +33,12 @@ const Signup = () => {
           "Content-Type": "application/json"
         }, withCredentials: true 
       }).then(res => {
-          console.log("DATA: ", res.data);
-          navigate("/feed");
+          if(res.data.isAuthenticated){
+            navigate("/feed");
+          } else{
+            console.log(res.data.error);
+            navigate("/signup");
+          }
         })
         .catch(err => {
           console.log("ERROR: ", err);
@@ -43,7 +47,7 @@ const Signup = () => {
 
     return (
         <div className="d-flex justify-content-center vw-100 border vh-100 align-items-center">
-        <div className="w-25">
+        <div className="w-auto">
           <h1 className="text-center fw-bold">Sign Up</h1>
           <form onSubmit={handleSubmit} >
             <div className="my-3">

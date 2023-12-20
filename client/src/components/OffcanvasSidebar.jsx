@@ -33,8 +33,12 @@ const OffCanvasSidebar = () => {
                                 <div className="my-2 mx-3">
                                     <Link to="/post" className="text-decoration-none btn btn-primary rounded-pill p-2 w-100 shadow">Post</Link>
                                 </div>
+                                <div className="my-2 mx-3 fixed-bottom w-50 ps-5">
+                                   <Link className="btn btn-primary rounded-pill p-2 w-75 shadow">Log out</Link>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>  
             </div>  
