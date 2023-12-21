@@ -115,9 +115,9 @@ app.get("/auth/facebook/home",
 
 app.get("/", (req,res) =>{
    if(req.isAuthenticated()){
-    res.json({userId:req.user, isAuthenticated: true});
+    res.status(200).json({userId:req.user, isAuthenticated: true});
    } else {
-    res.json({isAuthenticated: false});
+    res.status(401).json({isAuthenticated: false});
    }
 });
 
@@ -129,15 +129,15 @@ app.post("/register", bodyParser.json(), (req, res) => {
     User.register({ username: username},password, (err, user) => {
       if (err) {
         const message = `An error occurred while signing up: ${err.message}`;
-        res.json({isAuthenticated: false, error: message});
+        res.status(400).json({isAuthenticated: false, error: message});
       }
       passport.authenticate("local")(req, res, function(){
-        res.json({isAuthenticated: true, user: user});
+        res.status(200).json({isAuthenticated: true, user: user});
       });
     });
    } catch(err){
       message =`An error occured: ${err.message}`
-      res.json({isAuthenticated: false, error: message});
+      res.status(500).json({isAuthenticated: false, error: message});
     
    }
 });
@@ -151,17 +151,17 @@ app.post("/login", bodyParser.json(), (req, res) => {
     });
     req.login(user, (err) => {
       if(err){
-        res.json({isAuthenticated: false, error:err.message});
+        res.status(400).json({isAuthenticated: false, error:err.message});
       } else{
         passport.authenticate("local")(req, res, () => {
           
-          res.json({isAuthenticated: true, user: user});
+          res.status(200).json({isAuthenticated: true, user: user});
         });
       }
     })
   } catch(err){
     message =`An error occured: ${err.message}`
-    res.json({isAuthenticated: false, error: message});
+    res.status(500).json({isAuthenticated: false, error: message});
   }
 });
 
@@ -170,18 +170,18 @@ app.get("/api/posts/:id", async (req,res) => {
   if(req.isAuthenticated()){
     const post = await Post.findById(req.params.id);
     if(post){
-      res.json({post});
+      res.status(200).json({post});
     } else{
-      res.json({message: `Post ${req.params.id} not found`});
+      res.status(404).json({message: `Post ${req.params.id} not found`});
     }
   } else{
-    res.json({isAuthenticated: false});
+    res.status(401).json({isAuthenticated: false});
   }
 });
 
 app.post("/api/posts", Formidable(), async (req,res) => {
     try{
-      console.log(req.fields);
+      console.log(req.files);
       if(req.files.image){
         const image = req.files.image;
         const buf = crypto.randomBytes(16);
@@ -208,7 +208,7 @@ app.post("/api/posts", Formidable(), async (req,res) => {
             author:req.fields.author
           })
           await newPost.save();
-          res.json(newPost);
+          res.status(200).json({newPost: newPost, message: "success"});
         })
       } else{
         const newPost = new Post({
@@ -218,11 +218,10 @@ app.post("/api/posts", Formidable(), async (req,res) => {
           timestamp:new Date()
         })
         await newPost.save();
-        console.log(newPost);
-        res.json(newPost, {message: "success"});
+        res.status(200).json({newPost: newPost, message: "success"});
       }
     } catch(err){
-       res.json({message: `An error has occured: ${err.messsage}`});
+       res.status(200).json({message: `An error has occured: ${err.messsage}`});
     }
 });
 
@@ -230,10 +229,10 @@ app.get("/api/posts", async (req,res) => {
    try{
     const posts = await Post.find({});
     if(posts.length !== 0){
-       res.json(posts);
+       res.status(200).json(posts);
     }
     else{
-      res.json({message: "No posts yet"});
+      res.status(404).json({message: "No posts yet"});
     }
    } catch(err){
      res.status(500).json({error: err.message});
@@ -274,10 +273,10 @@ app.patch("/api/posts/:id", Formidable(), async (req,res) => {
     post.text = post.text || req.fields.text;
     post.timestamp = new Date();
     await post.save();
-    res.json(post);
+    res.status(200).json(post);
     
   } catch(err){
-     res.json({message: `An error has occured: ${err.messsage}`});
+     res.status(500).json({message: `An error has occured: ${err.messsage}`});
   }
 });
 
@@ -294,7 +293,7 @@ app.delete("/ap/posts/:id", async (req, res) => {
         })
         .catch((err) => {
           console.log(`Error: ${err.message}`)
-          res.json({message: `An error has occured.Please try again later`});
+          res.status(200).json({message: `An error has occured.Please try again later`});
         });
    }catch(err){
      console.log(`Error: ${err.message}`)
@@ -305,14 +304,14 @@ app.delete("/ap/posts/:id", async (req, res) => {
 app.get("/api/isAuthenticated", (req,res) => {
  
     if(req.isAuthenticated()){
-      res.json({isAuthenticated: true});
+      res.status(200).json({isAuthenticated: true});
     } else{
-      res.json({isAuthenticated: false});
+      res.status(401).json({isAuthenticated: false});
     }
 });
 
 app.get('/api', (req, res) => {
-  res.json({ message: 'Hello from server!' });
+  res.status(200).json({ message: 'Hello from server!' });
 });
 
 app.listen(port, () => {

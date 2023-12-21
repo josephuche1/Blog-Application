@@ -3,20 +3,23 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
 const PostForm = () => {
-  const [image, setImage] = useState(null); // [image, setImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null); // [image, setImage] = useState(null);
   const [text, setText] = useState(""); // [text, setText] = useState("");
+  const [image, setImage] = useState(null); // [image, setImage] = useState(null);
   const navigate = useNavigate();
 
   // Function to allow user to preview image before uploading
   const handleImageOnChange = (e) => {
      const selectedImage = e.target.files[0];
      if(selectedImage){
+      setImage(selectedImage);
        const reader = new FileReader();
        reader.onload = event =>{
-         setImage(event.target.result);
+         setPreviewImage(event.target.result);
        };
        reader.readAsDataURL(selectedImage);
      }else{
+        setPreviewImage(null);
         setImage(null);
      }
   };
@@ -26,34 +29,30 @@ const PostForm = () => {
     setText(e.target.value);
   };
 
-  // Function to handle form submission
-  const handleOnSubmit = (e) => {
-    try{
-      e.preventDefault();
-      const formData = new FormData();
-      formData.append("image", image);
-      formData.append("text", text);
-      axios.post("http://localhost:5000/api/posts", {
-        text:text,
-        image:image
-      }, {
-        headers:{
+  const handleSubmit = async (e) => {
+     try{
+       e.preventDefault();
+       const formData = new FormData();
+       formData.append("text", text);
+       formData.append("image", image);
+
+       await axios.post("http://localhost:5000/api/posts", formData, {
+        header: {
           "Content-Type": "multipart/form-data"
-        }, withCredentials:true
-      })
-      .then(res => {
-        console.log(res.data);
-         if(res.data.message === "success"){
-            // navigate("/feed");
-            console.log("success");
-         } else{
-           console.log(res.data.message);
-         }
-      })
-      .catch(err => console.log(err));
-    }catch(err){
-      console.log(err);
-    }
+        },withCredentials: true})
+          .then(res => {
+            if(res.data.message === "success"){
+              console.log(res.data);
+              console.log("Post created successfully");
+            } else{
+              console.log("res.data.message");
+            }
+          }). catch(err => {
+            console.log(err);
+          });
+     }catch(err){
+       console.log(err);
+     }
   };
 
 
@@ -66,11 +65,11 @@ const PostForm = () => {
         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div className="modal-body">
-        <form onSubmit={handleOnSubmit}>
+        <form onSubmit={handleSubmit}>
             <div>
                 <textarea onChange={handleTextOnChange} className="borderless bg-body w-100" id="text" rows="3" placeholder="What's on your mind?" value={text}/>
             </div>
-            {image && <img src={image} alt="image preview" className="w-100"/>}
+            {previewImage && <img src={previewImage} alt="image preview" className="w-100"/>}
             <div className="d-flex flex-row justify-content-between align-items-center">
               <div>
                 <label for="image" >
