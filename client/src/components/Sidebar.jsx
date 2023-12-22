@@ -20,6 +20,7 @@ const Sidebar = () => {
         console.log(err);
       })
   };
+  
   return (
   <div className='sidebar'>
     <div className="sidebar-header mx-4 fs-3 fw-bold">Blog</div>

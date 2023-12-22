@@ -4,9 +4,9 @@ import Feed from "../pages/Feed";
 import Login from "../pages/Login";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Signup from "../pages/Signup";
+import About from "../pages/About";
 
 function App() {
-
     return (
       <BrowserRouter>
             <Routes>
@@ -14,6 +14,9 @@ function App() {
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+                <Route path="/home" element={<Feed />} />
+                <Route path="/about" element={<About />} />
+                {/* <Route path="/profile" element={<profile />} /> */}
             </Routes>
      </BrowserRouter>
     );

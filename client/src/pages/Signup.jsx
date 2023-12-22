@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {Link,useNavigate} from "react-router-dom";
 import axios from "axios";
+import getFcmToken from "../components/firebase";
 
 
 const Signup = () => {
@@ -8,8 +9,9 @@ const Signup = () => {
     const [user, setUser] = useState({
       username:"",
       password: "",
-      confirm_password:""
+      confirm_password:"",
     });
+    const [info, setInfo] = useState("");
 
     function handleChange(event){
       const {name, value}  = event.target;
@@ -23,21 +25,25 @@ const Signup = () => {
 
     function handleSubmit(event){
       event.preventDefault();
-      axios.post("http://localhost:5000/register", user, {
-        headers: {
-          "Content-Type": "application/json"
-        }, withCredentials: true 
-      }).then(res => {
-          if(res.data.isAuthenticated){
-            navigate("/feed");
-          } else{
-            console.log(res.data.error);
-            navigate("/signup");
-          }
-        })
-        .catch(err => {
-          console.log("ERROR: ", err);
-        })
+      if(user.password !== user.confirm_password){
+        setInfo("Passwords don't match");
+      } else{
+         axios.post("http://localhost:5000/register", user, {
+          headers: {
+            "Content-Type": "application/json"
+          }, withCredentials: true 
+        }).then(res => {
+            if(res.data.isAuthenticated){
+              navigate("/feed");
+            } else{
+              console.log(res.data.error);
+              navigate("/signup");
+            }
+          })
+          .catch(err => {
+            console.log("ERROR: ", err);
+          })
+      }
     }
 
     return (
@@ -84,6 +90,7 @@ const Signup = () => {
               <input type="submit" className="btn btn-outline-primary w-100 my-3 " value="Sign Up" />
             </div>
           </form>
+          <small className="text-warning fw-lighter">{info}</small>
         </div>
       </div>
     )

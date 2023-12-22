@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import axios from "axios";
 
+
 const Login = () => {
    const[user, setUser]=  useState({
       username:"",
@@ -20,8 +21,9 @@ const Login = () => {
     })
    }
 
-   function handleSubmit(event){
+   async function handleSubmit(event){
     event.preventDefault();
+
     axios.post("http://localhost:5000/login", user, {
       headers:{
         "content-Type": "application/json"
@@ -35,7 +37,7 @@ const Login = () => {
       }
     })
     .catch((err) => {
-      setInfo(err.response.statusText);
+      setInfo(err.message);
     });
    }
 

@@ -68,7 +68,8 @@ const userSchema = new mongoose.Schema({
    googleId:String,
    facebook:String,
    posts:[String], // Store user posts in an array with the post id
-   profilepic:String
+   profilepic:String,
+   fcmToken: String
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -151,8 +152,7 @@ app.post("/login", bodyParser.json(), (req, res) => {
       if(err){
         res.json({isAuthenticated: false, error:err.message});
       } else{
-        passport.authenticate("local")(req, res, () => {
-          
+        passport.authenticate("local")(req, res, async () => {
           res.json({isAuthenticated: true, user: user});
         });
       }
