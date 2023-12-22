@@ -163,6 +163,13 @@ app.post("/login", bodyParser.json(), (req, res) => {
   }
 });
 
+app.get("/logout", (req,res) => {
+  req.logout(() => {
+    res.json({isAuthenticated: false});
+  })
+  
+});
+
 // Blog post API
 app.get("/api/posts/:id", async (req,res) => {
   if(req.isAuthenticated()){
@@ -180,8 +187,10 @@ app.get("/api/posts/:id", async (req,res) => {
 app.post("/api/posts", Formidable(), async (req,res) => {
  
     try{
+      console.log(req.fields);
       const author = await User.findById(req.fields.author);
       if(author){
+        console.log(author);
         if(req.files.image){
           const image = req.files.image;
           const buf = crypto.randomBytes(16);
@@ -208,6 +217,8 @@ app.post("/api/posts", Formidable(), async (req,res) => {
               author:author.username
             })
             await newPost.save();
+            author.posts.push(newPost._id);
+            await author.save();
             res.json({newPost: newPost, message: "success"});
           })
         } else{
@@ -219,8 +230,11 @@ app.post("/api/posts", Formidable(), async (req,res) => {
             author:author.username
           })
           await newPost.save();
+          author.posts.push(newPost._id);
+          await author.save();
           res.json({newPost: newPost, message: "success"});
         }
+        
       } else{
         res.json({message: "User not found"});
       }

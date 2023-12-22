@@ -7,6 +7,7 @@ const PostForm = () => {
   const [text, setText] = useState(""); // [text, setText] = useState("");
   const [image, setImage] = useState(null); // [image, setImage] = useState(null);
   const [display, setDisplay] = useState(""); // [display, setDisplay] = useState("")
+  const [rows, setRows] = useState(1); // [rows, setRows] = useState(3)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,46 +34,55 @@ const PostForm = () => {
   const handleTextOnChange = (e) => {
     setText(e.target.value);
   };
-
+  
+  // function to handle text input
   const handleSubmit = async (e) => {
      try{
        e.preventDefault();
-       const formData = new FormData();
-       formData.append("text", text);
-       formData.append("image", image);
-       
-       await axios.get("http://localhost:5000/api/getUser", {withCredentials: true})
-         .then(res => {
-           console.log(res.data.user);
-           formData.append("author", res.data.user._id)
-         }) .catch(err => {
-            console.log(err);
-         });
-       await axios.post("http://localhost:5000/api/posts", formData, {
-        header: {
-          "Content-Type": "multipart/form-data"
-        },withCredentials: true})
+       if(text !== "" || image !== null){
+        const formData = new FormData();
+        formData.append("text", text);
+        formData.append("image", image);
+        
+        await axios.get("http://localhost:5000/api/getUser", {withCredentials: true})
           .then(res => {
-            if(res.data.message === "success"){
-              console.log(res.data);
-              console.log("Post created successfully");
-            } else{
-              console.log(res.data.message);
-            }
-          }). catch(err => {
-            console.log(err);
+            console.log(res.data.user);
+            formData.append("author", res.data.user._id)
+          }) .catch(err => {
+             console.log(err);
           });
+        await axios.post("http://localhost:5000/api/posts", formData, {
+         header: {
+           "Content-Type": "multipart/form-data"
+         },withCredentials: true})
+           .then(res => {
+             if(res.data.message === "success"){
+               console.log(res.data);
+               console.log("Post created successfully");
+             } else{
+               console.log(res.data.message);
+             }
+           }). catch(err => {
+             console.log(err);
+           });
+       }
      }catch(err){
        console.log(err);
      }
      reset();
   };
-
+  
+  // function to reset form
   const reset = () => {
     setText("");
     setImage(null);
     setPreviewImage(null);
     setDisplay("none");
+  }
+
+  // function to handle text input on click
+  const handleTextOnClick = () => {
+    setRows(3);
   }
 
 
@@ -87,7 +97,7 @@ const PostForm = () => {
       <div className="modal-body">
         <form onSubmit={handleSubmit}>
             <div>
-                <textarea onChange={handleTextOnChange} className="borderless bg-body w-100" id="text" rows="3" placeholder="What's on your mind?" value={text}/>
+                <textarea onClick={handleTextOnClick} onChange={handleTextOnChange} className="borderless bg-body w-100" id="text" rows={rows} placeholder="What's on your mind?" value={text}/>
             </div>
             {previewImage && <img src={previewImage} alt="image preview" className="w-100"/>}
             <div className="d-flex flex-row justify-content-between align-items-center">

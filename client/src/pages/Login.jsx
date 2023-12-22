@@ -7,6 +7,7 @@ const Login = () => {
       username:"",
       password:"",
    });
+   const [info, setInfo] = useState("");
    const navigate = useNavigate();
 
    function handleChange(event){
@@ -30,11 +31,11 @@ const Login = () => {
       if(res.data.isAuthenticated){
         navigate("/feed");
       } else {
-        alert(res.data.error);
+        setInfo(res.data.error);
       }
     })
     .catch((err) => {
-      console.log(err);
+      setInfo(err.response.statusText);
     });
    }
 
@@ -42,6 +43,7 @@ const Login = () => {
     <div className="d-flex justify-content-center vw-100 border vh-100 align-items-center">
       <div className="w-auto">
         <h1 className="text-center fw-bold">Login</h1>
+        
         <form onSubmit={handleSubmit} method="post">
           <div className="my-3">
             <label className="form-label">Username</label>
@@ -56,6 +58,7 @@ const Login = () => {
             <input type="submit" className="btn btn-outline-primary w-100 my-3 " value="Log In" />
           </div>
         </form>
+        <small className="text-danger fw-lighter">{info}</small>
       </div>
     </div>
   );

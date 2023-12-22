@@ -1,8 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import OffcanvasToggleButton from './OffcanvasToggleButton';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const OffCanvasSidebar = () => {
+  const navigate = useNavigate();
+
+  // function to handle logout
+  const handleLogout = async () => {
+    await axios.get("http://localhost:5000/logout", {withCredentials: true})
+      .then(res => {
+          console.log(res.data);
+          if(res.data.isAuthenticated === false){
+            navigate("/login");
+          } else {
+            navigate("/home");
+          }
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  };
     return (
         <div>
             <div className="offcanvas-sidebar">
@@ -31,10 +48,10 @@ const OffCanvasSidebar = () => {
                                     <Link to="/notifications" className="text-decoration-none fw-bold fs-4 ">Notifications</Link>
                                 </div>
                                 <div className="my-2 mx-3">
-                                    <Link to="/post" className="text-decoration-none btn btn-primary rounded-pill p-2 w-100 shadow">Post</Link>
+                                    <button className="text-decoration-none btn btn-primary rounded-pill p-2 w-100 shadow" data-bs-toggle="modal" data-bs-target="#postForm">Post</button>
                                 </div>
                                 <div className="my-2 mx-3 fixed-bottom w-50 ps-5">
-                                   <Link className="btn btn-primary rounded-pill p-2 w-75 shadow">Log out</Link>
+                                   <button onClick={handleLogout} className="btn btn-primary rounded-pill p-2 w-75 shadow">Log out</button>
                                 </div>
                             </div>
                         </div>

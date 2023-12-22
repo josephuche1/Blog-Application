@@ -1,7 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
+  // function to handle logout
+  const handleLogout = async () => {
+    await axios.get("http://localhost:5000/logout", {withCredentials: true})
+      .then(res => {
+          console.log(res.data);
+          if(res.data.isAuthenticated === false){
+            navigate("/login");
+          } else {
+            navigate("/home");
+          }
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  };
   return (
   <div className='sidebar'>
     <div className="sidebar-header mx-4 fs-3 fw-bold">Blog</div>
@@ -28,7 +46,7 @@ const Sidebar = () => {
           <span className="fs-5 fw-bold mx-3">Username</span>
         </div>
         <ul className="dropdown-menu px-2 mx-5 w-100">
-          <Link to="http://localhost:5000/logout" className="text-decoration-none w-100 dropdown-item">Log out</Link>
+          <button onClick={handleLogout} className="text-decoration-none w-100 dropdown-item">Log out</button>
         </ul>
       </div>
     </div>
