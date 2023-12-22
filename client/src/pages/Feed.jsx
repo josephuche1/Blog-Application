@@ -6,19 +6,20 @@ import Sidebar from '../components/Sidebar';
 import MiddleSection from '../components/MiddleSection';
 import OffCanvasSidebar from '../components/OffcanvasSidebar';
 import PostForm from '../components/PostForm';
-import Post from '../components/Post';
 
 const Feed= () => {
   const navigate = useNavigate();
 
   useEffect(() => {
     checkAuthentication();
-  }, []);
+  }, [navigate]);
 
-  async function checkAuthentication(){
-    await axios.get("http://localhost:5000/", {withCredentials: true})
+  function checkAuthentication(){
+    console.log("checking authentication");
+    axios.get("http://localhost:5000/", {withCredentials: true})
     .then((response) => {
       const data  = response.data;
+      console.log(response.status);
       if(data.isAuthenticated){
          navigate("/feed");
       }
@@ -26,7 +27,7 @@ const Feed= () => {
         navigate("/login");
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log("Error: "+err));
   }
 
 

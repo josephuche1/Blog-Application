@@ -115,53 +115,51 @@ app.get("/auth/facebook/home",
 
 app.get("/", (req,res) =>{
    if(req.isAuthenticated()){
-    res.status(200).json({userId:req.user, isAuthenticated: true});
+    res.json({user:req.user, isAuthenticated: true});
    } else {
-    res.status(401).json({isAuthenticated: false});
+    res.json({isAuthenticated: false});
    }
 });
 
 app.post("/register", bodyParser.json(), (req, res) => {
    try{
-    console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
     User.register({ username: username},password, (err, user) => {
       if (err) {
         const message = `An error occurred while signing up: ${err.message}`;
-        res.status(400).json({isAuthenticated: false, error: message});
+        res.json({isAuthenticated: false, error: message});
       }
       passport.authenticate("local")(req, res, function(){
-        res.status(200).json({isAuthenticated: true, user: user});
+        res.json({isAuthenticated: true, user: user});
       });
     });
    } catch(err){
       message =`An error occured: ${err.message}`
-      res.status(500).json({isAuthenticated: false, error: message});
+      res.json({isAuthenticated: false, error: message});
     
    }
 });
 
 app.post("/login", bodyParser.json(), (req, res) => {
   try{
-    console.log(req.body);
     const user = new User({
       username: req.body.username,
       password:req.body.password, 
     });
     req.login(user, (err) => {
       if(err){
-        res.status(400).json({isAuthenticated: false, error:err.message});
+        res.json({isAuthenticated: false, error:err.message});
       } else{
         passport.authenticate("local")(req, res, () => {
           
-          res.status(200).json({isAuthenticated: true, user: user});
+          res.json({isAuthenticated: true, user: user});
         });
       }
     })
   } catch(err){
     message =`An error occured: ${err.message}`
-    res.status(500).json({isAuthenticated: false, error: message});
+    res.json({isAuthenticated: false, error: message});
   }
 });
 
@@ -170,58 +168,64 @@ app.get("/api/posts/:id", async (req,res) => {
   if(req.isAuthenticated()){
     const post = await Post.findById(req.params.id);
     if(post){
-      res.status(200).json({post});
+      res.json({post});
     } else{
-      res.status(404).json({message: `Post ${req.params.id} not found`});
+      res.json({message: `Post ${req.params.id} not found`});
     }
   } else{
-    res.status(401).json({isAuthenticated: false});
+    res.json({isAuthenticated: false});
   }
 });
 
 app.post("/api/posts", Formidable(), async (req,res) => {
+ 
     try{
-      console.log(req.files);
-      if(req.files.image){
-        const image = req.files.image;
-        const buf = crypto.randomBytes(16);
-        const filePath = buf.toString("hex")+path.extname(image.name);
-
-        const readStream = fs.createReadStream(image.path);
-
-        const uploadStream = gfs.openUploadStream(filePath, {
-          chunkSizeBytes:1048576,
-          metadata:{
-            name: image.name,
-            size:image.size,
-            type: image.type
-          }
-        });
-        readStream.pipe(uploadStream);
-        uploadStream.on("finish", async () => {
+      const author = await User.findById(req.fields.author);
+      if(author){
+        if(req.files.image){
+          const image = req.files.image;
+          const buf = crypto.randomBytes(16);
+          const filePath = buf.toString("hex")+path.extname(image.name);
+  
+          const readStream = fs.createReadStream(image.path);
+  
+          const uploadStream = gfs.openUploadStream(filePath, {
+            chunkSizeBytes:1048576,
+            metadata:{
+              name: image.name,
+              size:image.size,
+              type: image.type
+            }
+          });
+          readStream.pipe(uploadStream);
+          uploadStream.on("finish", async () => {
+            const newPost = new Post({
+              image:filePath,
+              text: req.fields.text,
+              likes: 0,
+              comments:[],
+              timestamp:new Date(),
+              author:author.username
+            })
+            await newPost.save();
+            res.json({newPost: newPost, message: "success"});
+          })
+        } else{
           const newPost = new Post({
-            image:filePath,
             text: req.fields.text,
             likes: 0,
             comments:[],
             timestamp:new Date(),
-            author:req.fields.author
+            author:author.username
           })
           await newPost.save();
-          res.status(200).json({newPost: newPost, message: "success"});
-        })
+          res.json({newPost: newPost, message: "success"});
+        }
       } else{
-        const newPost = new Post({
-          text: req.fields.text,
-          likes: 0,
-          comments:[],
-          timestamp:new Date()
-        })
-        await newPost.save();
-        res.status(200).json({newPost: newPost, message: "success"});
+        res.json({message: "User not found"});
       }
     } catch(err){
-       res.status(200).json({message: `An error has occured: ${err.messsage}`});
+       res.json({message: `An error has occured: ${err.messsage}`});
     }
 });
 
@@ -229,13 +233,13 @@ app.get("/api/posts", async (req,res) => {
    try{
     const posts = await Post.find({});
     if(posts.length !== 0){
-       res.status(200).json(posts);
+       res.json(posts);
     }
     else{
-      res.status(404).json({message: "No posts yet"});
+      res.json({message: "No posts yet"});
     }
    } catch(err){
-     res.status(500).json({error: err.message});
+     res.json({error: err.message});
    }
    
 });
@@ -273,10 +277,10 @@ app.patch("/api/posts/:id", Formidable(), async (req,res) => {
     post.text = post.text || req.fields.text;
     post.timestamp = new Date();
     await post.save();
-    res.status(200).json(post);
+    res.json(post);
     
   } catch(err){
-     res.status(500).json({message: `An error has occured: ${err.messsage}`});
+     res.json({message: `An error has occured: ${err.messsage}`});
   }
 });
 
@@ -289,11 +293,11 @@ app.delete("/ap/posts/:id", async (req, res) => {
             await gfs.delete(image[0]._id);
           }
           await Post.findByIdAndDelete(req.params.id);
-          res.status(200).json({message: "Successfully deleted"});
+          res.json({message: "Successfully deleted"});
         })
         .catch((err) => {
           console.log(`Error: ${err.message}`)
-          res.status(200).json({message: `An error has occured.Please try again later`});
+          res.json({message: `An error has occured.Please try again later`});
         });
    }catch(err){
      console.log(`Error: ${err.message}`)
@@ -304,14 +308,22 @@ app.delete("/ap/posts/:id", async (req, res) => {
 app.get("/api/isAuthenticated", (req,res) => {
  
     if(req.isAuthenticated()){
-      res.status(200).json({isAuthenticated: true});
+      res.json({isAuthenticated: true});
     } else{
-      res.status(401).json({isAuthenticated: false});
+      res.json({isAuthenticated: false});
     }
 });
 
+app.get("/api/getUser", (req,res) => {
+  if(req.isAuthenticated()){
+    res.json({user: req.user});
+  } else{
+    res.json({user: null});
+  }
+});
+
 app.get('/api', (req, res) => {
-  res.status(200).json({ message: 'Hello from server!' });
+  res.json({ message: 'Hello from server!' });
 });
 
 app.listen(port, () => {

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
@@ -6,7 +6,12 @@ const PostForm = () => {
   const [previewImage, setPreviewImage] = useState(null); // [image, setImage] = useState(null);
   const [text, setText] = useState(""); // [text, setText] = useState("");
   const [image, setImage] = useState(null); // [image, setImage] = useState(null);
+  const [display, setDisplay] = useState(""); // [display, setDisplay] = useState("")
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setDisplay("");
+  },[display]); // [display, setDisplay] = useState("none")
 
   // Function to allow user to preview image before uploading
   const handleImageOnChange = (e) => {
@@ -35,7 +40,14 @@ const PostForm = () => {
        const formData = new FormData();
        formData.append("text", text);
        formData.append("image", image);
-
+       
+       await axios.get("http://localhost:5000/api/getUser", {withCredentials: true})
+         .then(res => {
+           console.log(res.data.user);
+           formData.append("author", res.data.user._id)
+         }) .catch(err => {
+            console.log(err);
+         });
        await axios.post("http://localhost:5000/api/posts", formData, {
         header: {
           "Content-Type": "multipart/form-data"
@@ -45,7 +57,7 @@ const PostForm = () => {
               console.log(res.data);
               console.log("Post created successfully");
             } else{
-              console.log("res.data.message");
+              console.log(res.data.message);
             }
           }). catch(err => {
             console.log(err);
@@ -53,11 +65,19 @@ const PostForm = () => {
      }catch(err){
        console.log(err);
      }
+     reset();
   };
+
+  const reset = () => {
+    setText("");
+    setImage(null);
+    setPreviewImage(null);
+    setDisplay("none");
+  }
 
 
   return (
-<div className="modal fade" id="postForm" tabindex="-1" aria-labelledby="postFormLabel" aria-hidden="true" data-bs-backdrop="false">
+<div className="modal fade" id="postForm" tabindex="-1" aria-labelledby="postFormLabel" aria-hidden="true" data-bs-backdrop="false" style={{display:display}}>
   <div className="modal-dialog">
     <div className="modal-content">
       <div className="modal-header">
