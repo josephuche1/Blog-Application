@@ -1,6 +1,8 @@
-import React, {useState} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import axios from "axios";
+import { SocketContext } from "../components/SocketContext";
+import addNotification  from 'react-push-notification';
 
 
 const Login = () => {
@@ -10,6 +12,7 @@ const Login = () => {
    });
    const [info, setInfo] = useState("");
    const navigate = useNavigate();
+   const socket = useContext(SocketContext);
 
    function handleChange(event){
     const {name, value} = event.target;
@@ -31,13 +34,25 @@ const Login = () => {
     })
     .then((res) => {
       if(res.data.isAuthenticated){
+        const userId = res.data.user._id;
+        socket.emit("user connected", userId);
+        
+              // Send a notification
+        addNotification({
+          title: 'Successful Login',
+          subtitle: 'You have successfully logged in!',
+          message: 'You can now access your feed.',
+          theme: 'darkblue',
+          native: true // when using native, your OS will handle theming.
+        });
         navigate("/feed");
       } else {
-        setInfo(res.data.error);
+        setInfo("Else:" + res.data.error);
       }
     })
     .catch((err) => {
-      setInfo(err.message);
+      console.log("ERROR: ", err);
+      setInfo("Err: "+err.message);
     });
    }
 

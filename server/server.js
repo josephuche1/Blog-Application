@@ -3,7 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import session from "express-session";
-import passport, { Passport } from "passport"; 
+import passport from "passport"; 
 import passportLocalMongoose from "passport-local-mongoose";
 import {Strategy as GoogleStrategy} from "passport-google-oauth20";
 import FacebookStrategy from "passport-facebook";
@@ -13,16 +13,39 @@ import fs from "fs";
 import crypto from "crypto";
 import bodyParser from "body-parser";
 import Formidable from "express-formidable";
+import http from "http"; 
+import {Server} from 'socket.io';
 
 const app = express();
 const port = 5000;
 let message;
 let gfs;
+const server = http.createServer(app);
+const io = new Server(server);
+
+
+const userSockets = {};
 
 app.use(cors({
   origin: "http://localhost:3000", // Replace with your frontend origin
   credentials: true
 }));
+
+
+
+io.on("connection", (socket)  => {
+  socket.on("user connected", (userId) => {
+    userSockets[userId] = socket;
+  });
+  socket.on("disconnect", () => {
+    // Remove the user's socket when they disconnect
+    for (let userId in userSockets) {
+      if (userSockets[userId] === socket) {
+        delete userSockets[userId];
+      }
+    }
+  });
+})
 
 
 // setting up user authentication
@@ -340,6 +363,6 @@ app.get('/api', (req, res) => {
   res.json({ message: 'Hello from server!' });
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`API server is running on port ${port}`)
 });
