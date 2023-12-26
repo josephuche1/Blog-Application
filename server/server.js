@@ -338,6 +338,21 @@ app.get('/api', (req, res) => {
   res.json({ message: 'Hello from server!' });
 });
 
+app.get("/images/:filename", async (req, res) => {
+   try{
+    const image = await gfs.find({filename: req.params.filename}).toArray();
+    if(image.length != 0){
+      gfs.openDownloadStreamByName(req.params.filename).pipe(res);
+    } else{
+      res.json({message: "Image not found"});
+    }
+   } catch(err){
+      res.json({message: `An error has occured: ${err.message}`});
+   }
+});
+
+app.get('/favicon.ico', (req, res) => res.sendStatus(204));
+
 server.listen(port, () => {
     console.log(`API server is running on port ${port}`)
 });
