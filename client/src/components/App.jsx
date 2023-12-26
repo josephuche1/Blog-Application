@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Feed from "../pages/Feed";
+import Home from "../pages/Home";
 import Login from "../pages/Login";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Signup from "../pages/Signup";
@@ -13,12 +13,12 @@ function App() {
        <SocketProvider>
             <BrowserRouter>
               <Routes>
-                <Route index exact path="/" element={<Feed />} />
-                <Route path="/feed" element={<Feed />} />
+                <Route index exact path="/" element={<Home />} />
+                <Route path="/feed" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route path="/home" element={<Feed />} />
-                <Route path="/about" element={<About />} />
+                <Route path="/home" element={<Home/>} />
+                {/* <Route path="/about" element={<About />} /> */}
                 {/* <Route path="/profile" element={<profile />} /> */}
               </Routes>
            </BrowserRouter>

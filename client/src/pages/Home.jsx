@@ -8,7 +8,7 @@ import OffCanvasSidebar from '../components/OffcanvasSidebar';
 import PostForm from '../components/PostForm';
 import About from './About';
 
-const Feed= () => {
+const Home= () => {
   const navigate = useNavigate();
   const [section, setSection] = useState("feed"); // ["feed", "about", "notification"
   const [feedSection, setFeed] = useState(true);
@@ -92,4 +92,4 @@ const Feed= () => {
   );
 };
 
-export default Feed;
+export default Home;

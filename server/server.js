@@ -5,9 +5,6 @@ import cors from "cors";
 import session from "express-session";
 import passport from "passport"; 
 import passportLocalMongoose from "passport-local-mongoose";
-import {Strategy as GoogleStrategy} from "passport-google-oauth20";
-import FacebookStrategy from "passport-facebook";
-import findOrCreate from "mongoose-findorcreate";
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
@@ -113,28 +110,6 @@ passport.deserializeUser(async (id, done) => {
       done(null, user);
     });
 });
-
-passport.use(new FacebookStrategy({
-  clientID: process.env.APP_ID,
-  clientSecret: process.env.APP_SECRET,
-  callbackURL: "http://localhost:3000/auth/facebook/home",
-  profileFields: ["id", "displayName", "photos", "email"]
-}, 
-(accesstoken, refreshToken, profile, cb) => {
-   User.findOrCreate({facebook:profile.id, email:profile.email, username: profile.email}, (err, user) => {
-     return cb(err,user);
-   })
-}
-));
-
-app.get("/auth/facebook", passport.authenticate("facebook"));
-
-app.get("/auth/facebook/home", 
-  passport.authenticate("facebook", { failureRedirect: "http://localhost:3000/login"}),
-  (req,res) => {
-    // successfully authenticated, redirect home
-    res.redirect("http://localhost:3000/");
-  });
 
 
 app.get("/", (req,res) =>{
