@@ -31,12 +31,17 @@ app.use(cors({
   credentials: true
 }));
 
-
-
 io.on("connection", (socket)  => {
+  console.log("User connected");
   socket.on("user connected", (userId) => {
-    userSockets[userId] = socket;
+    userSockets[userId] = socket.id;
+    console.log(userSockets);
   });
+
+  socket.on("notify", (data, userId, cb) => {
+    io.to(userSockets[userId]).emit("notification", data);
+    cb();
+  })
   socket.on("disconnect", () => {
     // Remove the user's socket when they disconnect
     for (let userId in userSockets) {
@@ -47,14 +52,12 @@ io.on("connection", (socket)  => {
   });
 })
 
-
 // setting up user authentication
 app.use(session({
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -92,7 +95,6 @@ const userSchema = new mongoose.Schema({
    facebook:String,
    posts:[String], // Store user posts in an array with the post id
    profilepic:String,
-   fcmToken: String
 });
 
 userSchema.plugin(passportLocalMongoose);

@@ -14,6 +14,20 @@ const Login = () => {
    const navigate = useNavigate();
    const socket = useContext(SocketContext);
 
+   useEffect(() => {
+    socket.on("notification", (data) => {
+        addNotification({
+            title: 'Successful Login',
+            message: data,
+            theme: 'darkblue',
+            native: true, // when using native, your OS will handle theming.
+            duration: 10000
+        });
+    });
+    // Clean up the effect
+    return () => socket.off("notification");
+}, []);
+
    function handleChange(event){
     const {name, value} = event.target;
     setUser ((user) => {
@@ -37,15 +51,12 @@ const Login = () => {
         const userId = res.data.user._id;
         socket.emit("user connected", userId);
         
-              // Send a notification
-        addNotification({
-          title: 'Successful Login',
-          subtitle: 'You have successfully logged in!',
-          message: 'You can now access your feed.',
-          theme: 'darkblue',
-          native: true // when using native, your OS will handle theming.
+        // Send a notification
+        socket.emit("notify", `You have successfully logged in as ${res.data.user.username}!`, userId, () => {
+          navigate("/feed");
         });
-        navigate("/feed");
+        
+
       } else {
         setInfo("Else:" + res.data.error);
       }

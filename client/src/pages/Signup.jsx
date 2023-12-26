@@ -1,16 +1,34 @@
-import React, {useState} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import {Link,useNavigate} from "react-router-dom";
 import axios from "axios";
+import { SocketContext } from "../components/SocketContext";
+import addNotification  from 'react-push-notification'; 
 
 
 const Signup = () => {
     const navigate = useNavigate();
+    const socket =  useContext(SocketContext);
     const [user, setUser] = useState({
       username:"",
       password: "",
       confirm_password:"",
     });
     const [info, setInfo] = useState("");
+    
+    useEffect(() => {
+      socket.on("notification", (data) => {
+          addNotification({
+              title: 'Successful Registration',
+              message: data,
+              theme: 'darkblue',
+              native: true, // when using native, your OS will handle theming.
+              duration: 10000
+          });
+      });
+  
+      // Clean up the effect
+      return () => socket.off("notification");
+  }, []);
 
     function handleChange(event){
       const {name, value}  = event.target;
@@ -33,7 +51,11 @@ const Signup = () => {
           }, withCredentials: true 
         }).then(res => {
             if(res.data.isAuthenticated){
-              navigate("/feed");
+              const userId = res.data.user._id;
+              socket.emit("user connected", userId);
+              socket.emit("notify", `You have successfully logged in as ${res.data.user.username}!`, userId, () => {
+                navigate("/feed");
+              });
             } else{
               console.log(res.data.error);
               navigate("/signup");
@@ -44,6 +66,8 @@ const Signup = () => {
           })
       }
     }
+
+    
 
     return (
         <div className="d-flex justify-content-center vw-100 border vh-100 align-items-center">
