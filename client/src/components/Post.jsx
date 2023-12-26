@@ -11,7 +11,7 @@ const Post = (props) => {
              <div className="col-9 py-2">
                  <p className="fw-bold fs-6 d-block">{props.author} • {props.day} {props.month}</p>
                  <p className="fs-6 d-block">{props.text}</p>
-                <img src={props.image} alt="image" className="rounded mx-auto d-block shadow" style={{width: "100%"}} />
+                 {props.image && <img src={props.image} alt="image" className="rounded mx-auto d-block shadow" style={{width: "100%"}} />}
              </div>
           </div>
           <div className="container d-flex justify-content-around">

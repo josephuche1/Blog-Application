@@ -78,7 +78,9 @@ const Home= () => {
               />
             </div>
             <div className=" d-md-none d-block">
-              <OffCanvasSidebar />
+              <OffCanvasSidebar
+                handleSection={handleSection}
+              />
             </div>
           </div>
           <div className='col-12 col-md-8 p-0 border-md-end middle'>

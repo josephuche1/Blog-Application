@@ -45,7 +45,7 @@ const PostScrollSection = () => {
           id={post._id}
           author={post.author} 
           comments={post.comments}
-          image = {`http://localhost:5000/images/${post.image}`}
+          image = {post.image && `http://localhost:5000/images/${post.image}`}
           likes={post.likes}
           day={getDate(post.timestamp)}
           month={getMonth(post.timestamp)}

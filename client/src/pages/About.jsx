@@ -3,16 +3,12 @@ import { Link } from 'react-router-dom';
 
 const About = () => {
     return (
-        <div id="about" className=" py-4 vw-100 border ps-5" style={{ overflowY: 'auto', height: '100vh' }}>
+        <div id="about" className=" py-4 vw-100 border ps-md-5" style={{ overflowY: 'auto', height: '100vh' }}>
             <div className="w-75">
                 <div className="px-4 py-3 my-2 text-center">
                  <h1 className="display-5 fw-bold text-body-emphasis">About the App</h1>
                  <div className="col-lg-6 mx-auto">
                     <p className="lead mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful JavaScript plugins. </p>
-                 </div>
-                 
-                 <div>
-                    <Link to="/home" className="btn btn-primary btn-lg px-4 me-sm-3">Return Home</Link>
                  </div>
                 </div>
             </div>
