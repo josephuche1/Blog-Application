@@ -18,14 +18,21 @@ const port = 5000;
 let message;
 let gfs;
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000", // This is your client's origin
+    methods: ["GET", "POST"], // Allow these HTTP methods
+    credentials: true // Allow cookies
+  }
+});
 
 
 const userSockets = {};
 
 app.use(cors({
   origin: "http://localhost:3000", // Replace with your frontend origin
-  credentials: true
+  credentials: true,
+  method: ["GET", "POST", "PATCH", "DELETE"]
 }));
 
 io.on("connection", (socket)  => {
@@ -93,7 +100,6 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.plugin(passportLocalMongoose);
-userSchema.plugin(findOrCreate);
 
 const User = mongoose.model("user", userSchema);
 const Post = mongoose.model("post", postSchema);
@@ -185,10 +191,8 @@ app.get("/api/posts/:id", async (req,res) => {
 app.post("/api/posts", Formidable(), async (req,res) => {
  
     try{
-      console.log(req.fields);
       const author = await User.findById(req.fields.author);
       if(author){
-        console.log(author);
         if(req.files.image){
           const image = req.files.image;
           const buf = crypto.randomBytes(16);
@@ -217,6 +221,7 @@ app.post("/api/posts", Formidable(), async (req,res) => {
             await newPost.save();
             author.posts.push(newPost._id);
             await author.save();
+            io.emit("new post", newPost);
             res.json({newPost: newPost, message: "success"});
           })
         } else{
@@ -230,6 +235,7 @@ app.post("/api/posts", Formidable(), async (req,res) => {
           await newPost.save();
           author.posts.push(newPost._id);
           await author.save();
+          io.emit("new post", newPost);
           res.json({newPost: newPost, message: "success"});
         }
         

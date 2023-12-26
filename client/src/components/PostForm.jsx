@@ -57,7 +57,6 @@ const PostForm = () => {
          },withCredentials: true})
            .then(res => {
              if(res.data.message === "success"){
-               console.log(res.data);
                console.log("Post created successfully");
              } else{
                console.log(res.data.message);
