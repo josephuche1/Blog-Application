@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Sidebar = () => {
+const Sidebar = (props) => {
   const navigate = useNavigate();
 
   // function to handle logout
@@ -27,16 +27,24 @@ const Sidebar = () => {
     <div className='d-flex flex-column px-5'>
        
       <div className="my-2 mx-3 ">
-        <Link to="/home" className="text-decoration-none fw-bold fs-4 ">Home</Link>
+        <div onClick={() => {
+          props.handleSection("feed");
+        }} className="text-decoration-none fw-bold fs-4 ">Home</div>
       </div>
       <div className="my-2 mx-3">
-        <Link to="/about" className="text-decoration-none fw-bold fs-4">About</Link>
+        <div onClick={() => {
+          props.handleSection("about");
+        }} className="text-decoration-none fw-bold fs-4">About</div>
       </div>
       <div className="my-2 mx-3">
-        <Link to="/profile" className="text-decoration-none fw-bold fs-4 ">Profile</Link>
+        <div onClick={() => {
+          props.handleSection("profile");
+        }} className="text-decoration-none fw-bold fs-4 ">Profile</div>
       </div>
       <div className="my-2 mx-3">
-        <Link to="/notifications" className="text-decoration-none fw-bold fs-4 ">Notifications</Link>
+        <div onClick={() => {
+          props.handleSection("notifications");
+        }} className="text-decoration-none fw-bold fs-4 ">Notifications</div>
       </div>
       <div className="my-2 mx-3">
         <button className="text-decoration-none btn btn-primary rounded-pill p-2 w-100 shadow" data-bs-toggle="modal" data-bs-target="#postForm">Post</button>

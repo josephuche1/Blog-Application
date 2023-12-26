@@ -32,10 +32,8 @@ app.use(cors({
 }));
 
 io.on("connection", (socket)  => {
-  console.log("User connected");
   socket.on("user connected", (userId) => {
     userSockets[userId] = socket.id;
-    console.log(userSockets);
   });
 
   socket.on("notify", (data, userId, cb) => {

@@ -1,9 +1,9 @@
 @charset "UTF-8";
 #root {
-  position: fixed;
   font-family: "Gabarito", sans-serif;
   margin: 0;
   padding: 0;
+  cursor: pointer;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
