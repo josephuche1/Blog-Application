@@ -1,18 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import OffcanvasToggleButton from '../components/OffcanvasToggleButton';
 
 const About = () => {
     return (
-        <div id="about" className=" py-4 vw-100 border ps-md-5" style={{ overflowY: 'auto', height: '100vh' }}>
-            <div className="w-75">
+        <div id="about" className=" border py-4 vw-100 border px-auto pe-md-5 container" style={{ overflowY: 'auto', height: '100vh' }}>
+          <div className="w-auto">
+                <div  className="d-md-none col-2 mx-2 pb-2">
+                  <OffcanvasToggleButton />
+                </div>
                 <div className="px-4 py-3 my-2 text-center">
                  <h1 className="display-5 fw-bold text-body-emphasis">About the App</h1>
                  <div className="col-lg-6 mx-auto">
                     <p className="lead mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful JavaScript plugins. </p>
                  </div>
                 </div>
-            </div>
-          <div className="w-75">
+          </div>
+          <div className="w-auto">
             <div className="container px-4 py-5" id="featured-3">
               <h2 className="pb-2 border-bottom">Features</h2>
               <div className="row g-4 py-5 row-cols-1 row-cols-lg-3">
@@ -35,8 +39,8 @@ const About = () => {
               </div>
             </div>
           </div>
-          <div class="w-75">
-            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+          <div class="w-auto px-4">
+            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 pb-1  my-2 border-top px-3">
                 <div class="col-md-4 d-flex align-items-center">
                     <Link to="#" class="mb-3 mb-md-0 text-body-secondary text-decoration-none">Uche  Joseph</Link>
                 </div>

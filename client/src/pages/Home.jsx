@@ -10,10 +10,12 @@ import About from './About';
 
 const Home= () => {
   const navigate = useNavigate();
-  const [section, setSection] = useState("feed"); // ["feed", "about", "notification"
+  const initialSection = localStorage.getItem("section") || "feed"
+  const [section, setSection] = useState(initialSection); // ["feed", "about", "notification", profile]
   const [feedSection, setFeed] = useState(true);
   const [aboutSection, setAbout] = useState(false);
   const [notificationSection, setNotification] = useState(false);
+  const [profileSection, setProfile] = useState(false);
 
   useEffect(() => {
     checkAuthentication();
@@ -35,14 +37,18 @@ const Home= () => {
       setAbout(false);
       setNotification(true);
     }
-    else{
-
+    else if(section === "profile"){
+      setFeed(false);
+      setAbout(false);
+      setNotification(false);
+      setProfile(true);
     }
 
     return () => {
       setFeed(true);
       setAbout(false);
       setNotification(false);
+      setProfile(false);
     }
   }, [section]);
 
@@ -53,7 +59,7 @@ const Home= () => {
       const data  = response.data;
       console.log(response.status);
       if(data.isAuthenticated){
-         navigate("/feed");
+         navigate("/");
       }
       else{
         navigate("/login");
@@ -64,6 +70,7 @@ const Home= () => {
 
   function handleSection(newSection){
      setSection(newSection);
+     localStorage.setItem("section", newSection);
   }
   
   console.log(section)

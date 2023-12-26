@@ -54,7 +54,7 @@ const Signup = () => {
               const userId = res.data.user._id;
               socket.emit("user connected", userId);
               socket.emit("notify", `You have successfully logged in as ${res.data.user.username}!`, userId, () => {
-                navigate("/feed");
+                navigate("/");
               });
             } else{
               console.log(res.data.error);

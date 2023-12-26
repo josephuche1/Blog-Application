@@ -53,7 +53,7 @@ const Login = () => {
         
         // Send a notification
         socket.emit("notify", `You have successfully logged in as ${res.data.user.username}!`, userId, () => {
-          navigate("/feed");
+          navigate("/");
         });
         
 

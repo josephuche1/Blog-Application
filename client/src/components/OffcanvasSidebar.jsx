@@ -13,7 +13,7 @@ const OffCanvasSidebar = (props) => {
           if(res.data.isAuthenticated === false){
             navigate("/login");
           } else {
-            navigate("/home");
+            navigate("/");
           }
       })
       .catch(err => {

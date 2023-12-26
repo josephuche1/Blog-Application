@@ -14,12 +14,9 @@ function App() {
             <BrowserRouter>
               <Routes>
                 <Route index exact path="/" element={<Home />} />
-                <Route path="/feed" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/home" element={<Home/>} />
-                {/* <Route path="/about" element={<About />} /> */}
-                {/* <Route path="/profile" element={<profile />} /> */}
               </Routes>
            </BrowserRouter>
            <Notifications />
