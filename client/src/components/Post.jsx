@@ -1,7 +1,44 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
+import handleLikes from "./handleLikes";
+import io from "socket.io-client";
+import axios from "axios"; 
 
 const Post = (props) => {
+      const [likes, setLikes] = useState(props.likes);
+      const [isliked, setIsLiked] = useState(false);
+      
+      const newStyle = {
+         color: "#2ecc71"
+      }
+
+      useEffect(() => {
+         const socket = io("http://localhost:5000");
+
+         socket.on("like", (data) => {
+            getLikes();
+         })
+
+         return () => socket.disconnect();
+      }, []);
+
+      const handleOnClick = async () => {
+         const res = await axios.get("http://localhost:5000/api/getUser", {withCredentials: true});
+         const likedOrUnliked = handleLikes(props.id, props.author, res.data.user.username);
+         if(likedOrUnliked === "liked"){
+            setIsLiked(true);
+         } else{  
+            setIsLiked(false);
+         }
+      }
+
+      const getLikes = () => {
+         axios.get(`http://localhost:5000/api/getLikes/${props.id}`)
+         .then(res => {
+            setLikes(res.data.likes);
+         })
+         .catch(err => console.log(err));
+      }
     return (
        <Link to="#"className="post card container text-decoration-none w-100 border-0">
           <div className="row p-2">
@@ -15,10 +52,10 @@ const Post = (props) => {
              </div>
           </div>
           <div className="container d-flex justify-content-around">
-             <div className="like">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill" viewBox="0 0 16 16 text-secondary">
+             <div className="like" >
+                <svg onClick={handleOnClick} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill" viewBox="0 0 16 16" style={{color: isliked && "#2ecc71"}}>
                 <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-                </svg> {props.likes}
+                </svg> {likes}
              </div>
              <div className="comment">
                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chat-left" viewBox="0 0 16 16">

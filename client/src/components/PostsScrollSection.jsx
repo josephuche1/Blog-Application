@@ -12,11 +12,11 @@ const PostScrollSection = () => {
       const socket = io("http://localhost:5000");
 
       socket.on("new post", (newPost) => {
-         setPosts([newPost, ...posts]);
+         getPosts();
       });
 
       getPosts();
-
+      
       return () => socket.disconnect();
    }, []);
 

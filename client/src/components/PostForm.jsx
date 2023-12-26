@@ -46,7 +46,6 @@ const PostForm = () => {
         
         await axios.get("http://localhost:5000/api/getUser", {withCredentials: true})
           .then(res => {
-            console.log(res.data.user);
             formData.append("author", res.data.user._id)
           }) .catch(err => {
              console.log(err);

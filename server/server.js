@@ -97,6 +97,7 @@ const userSchema = new mongoose.Schema({
    facebook:String,
    posts:[String], // Store user posts in an array with the post id
    profilepic:String,
+   likedPosts:[String], // Store the liked posts in an array with the post id
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -355,6 +356,49 @@ app.get("/images/:filename", async (req, res) => {
    } catch(err){
       res.json({message: `An error has occured: ${err.message}`});
    }
+});
+
+app.post("/like/:id", bodyParser.json(),  async (req, res) => {
+    try{
+      const post = await Post.findById(req.params.id);
+      const user = await User.findOne({username: req.body.username});
+      const author = await User.findOne({username: req.body.author})
+      const index = user.likedPosts.indexOf(req.params.id);
+      if(index === -1 && post){
+        post.likes++;
+        user.likedPosts.push(req.params.id);
+        await post.save();
+        await user.save();
+        res.json({userId: author._id, message: "liked"});
+        io.emit("like", "liked");
+
+      }
+      else{
+        post.likes > 0 && post.likes--; 
+        user.likedPosts.splice(index, 1);
+        await post.save();
+        await user.save();
+        res.json({message: "unliked"});
+        io.emit("like", "unliked");
+      }
+    
+    } catch(err){
+      console.log(err);
+      res.json({message: "An error has occureD. Please Try again later"});
+    }
+});
+
+app.get("/api/getLikes/:id", async (req, res) => {
+  try{
+    const post = await Post.findById(req.params.id);
+    if(post){
+      res.json({likes: post.likes});
+    } else{
+      res.json({message: "Post not found"});
+    }
+  } catch(err){
+    res.json({message: "An error has occured. Please try again later"});
+  }
 });
 
 app.get('/favicon.ico', (req, res) => res.sendStatus(204));
