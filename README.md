@@ -1,2 +1,0 @@
-# MERN Stack blog application
-
