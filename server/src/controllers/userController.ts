@@ -32,9 +32,10 @@ export const registerUser: RequestHandler<unknown, unknown, IRegisterUser, unkno
      } catch(err){
         next(err)
      }
-  };
+};
 
-  export const LoginUser: RequestHandler<unknown, unknown, ILoginUser, unknown> = async (req, res, next) => {
+// create a function to login a user. This function will be used as a middleware in the route
+export const LoginUser: RequestHandler<unknown, unknown, ILoginUser, unknown> = async (req, res, next) => {
     const {username, password} = req.body;
     console.log(req.body);
     try{
@@ -56,4 +57,11 @@ export const registerUser: RequestHandler<unknown, unknown, IRegisterUser, unkno
     } catch(err){
         next(err);
     }
-  };
+};
+
+// create a function to logout a user. This function will be used as a middleware in the route
+export const LogoutUser: RequestHandler = (req, res) => {
+    req.logout(() => {
+        res.json({isAuthenticated: false, user: null});
+    });
+}
