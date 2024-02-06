@@ -9,7 +9,7 @@ import Post from "./models/postSchema"; // import the post schema
 
 const port = env.PORT; // port number
 
-mongoose.connect(env.MONGO_URI) // connect to the database
+mongoose.connect(env.MONGO_URI) // connect to the database.
     .then(() => {
         console.log("Connected to the database");
         app.listen(port, () => {
@@ -19,7 +19,7 @@ mongoose.connect(env.MONGO_URI) // connect to the database
     .catch((err: Error) => console.log("Failed to connect to the database: ", err.message));
 
 const conn = mongoose.connection; // create a connection to the database
-let gfs:  mongoose.mongo.GridFSBucket; // create a variable to store the gridfs bucket
+let gfs:  mongoose.mongo.GridFSBucket; // create a variable to store the gridfs bucket.
 
 conn.once("open", () => { // once the connection is open, create a gridfs bucket
     gfs = new mongoose.mongo.GridFSBucket(conn.db, {

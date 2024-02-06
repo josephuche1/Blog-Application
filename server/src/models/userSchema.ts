@@ -1,9 +1,10 @@
-import { InferSchemaType, Schema, model } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
+import passportLocalMongoose from 'passport-local-mongoose';
 
 const userSchema = new Schema({
-    email: {type: String, required: true},
-    username: {type: String, required: true},
-    password: {type: String, required: true},
+    email: {type: String, required: true, unique: true},
+    username: {type: String, required: true, unique: true},
+    password: String,
     googleId: String,
     facebookId: String,
     posts:{type: [String], default: []},
@@ -11,8 +12,19 @@ const userSchema = new Schema({
     likedPosts: {type: [String], default: []},
 });
 
-type TUserSchema = InferSchemaType<typeof userSchema>;
+userSchema.plugin(passportLocalMongoose);
 
-const User  = model<TUserSchema>("User", userSchema);
+export interface IUser extends Document {
+    email: string;
+    username: string;
+    password?: string;
+    googleId?: string;
+    facebookId?: string;
+    posts: string[];
+    profilePicture?: string;
+    likedPosts: string[];
+}  
+
+const User  = model<IUser>("User", userSchema);
 
 export default User;
