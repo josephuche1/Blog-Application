@@ -2,6 +2,7 @@ import "dotenv/config"; // import the dotenv module to use environment variables
 import env from "./utils/validateEnv"; // import the validateEnv function to validate the environment variables
 import express, {Request, Response, NextFunction} from "express"; // import the express module for the server
 import userRoute from "./routes/userRoutes"; // import the user route
+import postRoute from "./routes/postRoutes"; // import the post route
 import passportConfig from "./config/passportConfig"; // import the passport configuration
 
 const app = express(); // create an instance of express
@@ -9,6 +10,7 @@ const app = express(); // create an instance of express
 passportConfig(app); // configure passport
 
 app.use("/user", userRoute); // use the user route
+app.use("/api/posts", postRoute); // use the post route
 
 
 // create a middleware to handle errors
