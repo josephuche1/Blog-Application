@@ -6,11 +6,14 @@ import { storage } from './storageSetUp'; // import the storage object from the 
 
 
 let gfs: GridFSBucket; // create a variable to store the GridFSBucket object
-conn.once('open', () => { // listen for the open event on the connection
-    gfs = new GridFSBucket(conn.db, { // create a new GridFSBucket object
-        bucketName: env.BUCKET_NAME
+
+export const initializeGridFs = () => { // create a function to initialize the GridFSBucket
+    conn.once('open', () => { // listen for the open event on the connection
+        gfs = new GridFSBucket(conn.db, { // create a new instance of the GridFSBucket class
+            bucketName: env.BUCKET_NAME
+        });
     });
-});
+};
 
 const upload = multer({ storage }); // create an instance of the multer middleware with the storage configuration
 
