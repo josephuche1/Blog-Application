@@ -1,7 +1,7 @@
-import { Schema, model, Document } from 'mongoose';
-import passportLocalMongoose from 'passport-local-mongoose';
+import { Schema, model, Document } from 'mongoose'; // import the Schema, model and Document modules from mongoose
+import passportLocalMongoose from 'passport-local-mongoose'; // import the passport-local-mongoose module
 
-const userSchema = new Schema({
+const userSchema = new Schema({ // create a new schema for the user model
     email: {type: String, required: true, unique: true},
     username: {type: String, required: true, unique: true},
     password: String,
@@ -12,9 +12,9 @@ const userSchema = new Schema({
     likedPosts: {type: [String], default: []},
 });
 
-userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(passportLocalMongoose); // use the passport-local-mongoose plugin to hash and salt the password
 
-export interface IUser extends Document {
+export interface IUser extends Document { // create an interface for the user model
     email: string;
     username: string;
     password?: string;
@@ -25,6 +25,6 @@ export interface IUser extends Document {
     likedPosts: string[];
 }  
 
-const User  = model<IUser>("User", userSchema);
+const User  = model<IUser>("User", userSchema); // create the user model
 
-export default User;
+export default User; // export the user model

@@ -16,17 +16,15 @@ app.use("/api/images", imageRoute); // use the image route
 
 
 // create a middleware to handle errors
-const userAuth = (error: unknown, req: Request, res: Response, next: NextFunction): void => {
+const errorHandling = (error: unknown, req: Request, res: Response, next: NextFunction): void => { // define the errorHandling middleware
     let errorMessage = "An unknown error occurred";
-    if(error instanceof Error){
+    if(error instanceof Error){ // check if the error is an instance of the Error class
         errorMessage = error.message;
     }
-    console.error(error);
-    res.json({error: errorMessage});
-    next();
+    console.error(error); // log the error to the console
+    res.json({error: errorMessage}); // send a response with the error message
+    next(); // call the next function
 }
-app.use(userAuth); // use the userAuth middleware
-
-
+app.use(errorHandling); // use the errorHandling middleware
 
 export default app; // export the app instance

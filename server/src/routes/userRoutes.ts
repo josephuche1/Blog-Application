@@ -1,6 +1,6 @@
 import * as userController from "../controllers/userController"; // import all functions from userController
-import express from "express";
-import bodyParser from "body-parser";
+import express from "express"; // import the express module
+import bodyParser from "body-parser"; // import the body-parser module
 
 const router = express.Router(); // create a router
 
@@ -8,4 +8,4 @@ router.post("/register", bodyParser.json(), userController.registerUser); // cre
 router.post("/login", bodyParser.json(), userController.LoginUser); // create a route to login a user
 router.get("/logout", userController.LogoutUser); // create a route to logout a user
 
-export default router;
+export default router; // export the router
