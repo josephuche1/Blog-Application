@@ -37,3 +37,19 @@ export const imageDelete: RequestHandler<unknown, unknown, IImage, unknown> = (r
         next(err); // pass the error to the error handling middleware
     }
 }
+
+// create function to get and display an image
+export const imageGet: RequestHandler = async (req, res, next) => {
+    try{
+        const file = await gfs.find({filename: req.params.filename}).toArray(); // find the file in the database
+        if(file && file.length !== 0){
+            gfs.openDownloadStreamByName(req.params.filename).pipe(res); // create a read stream and pipe it to the response
+        } else {
+            res.json({msg: "File not found"}); // send a response if the file was not found
+        }
+    } catch(err){
+        next(err); // pass the error to the error handling middleware
+    }
+};
+
+// create funvction to delete a single image
