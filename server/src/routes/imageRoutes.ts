@@ -6,5 +6,6 @@ import upload from '../utils/gridFsConfig'; // import the upload function from t
 const router = Router(); // create an instance of the Router class
 
 router.post("/upload", upload.array("images", 4), imageController.imageUpload); // create a route to handle image upload
+router.delete("/delete", imageController.imageDelete); // create a route to handle image delete
 
 export default router; // export the router instance

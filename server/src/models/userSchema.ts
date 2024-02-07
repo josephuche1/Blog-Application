@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { Schema, model, Document } from 'mongoose'; // import the Schema, model and Document modules from mongoose
 import passportLocalMongoose from 'passport-local-mongoose'; // import the passport-local-mongoose module
 
@@ -20,7 +21,7 @@ export interface IUser extends Document { // create an interface for the user mo
     password?: string;
     googleId?: string;
     facebookId?: string;
-    posts: string[];
+    posts: ObjectId[];
     profilePicture?: string;
     likedPosts: string[];
 }  

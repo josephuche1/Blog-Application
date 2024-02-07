@@ -15,5 +15,11 @@ export interface ILoginUser { // create an interface for the login user model
 export interface IPost { // create an interface for the post model
     author: string,
     text?: string, 
-    image?: string[],
+    images?: string[],
+}
+
+
+// Interface models for the image models
+export interface IImage{
+    images: string[]
 }

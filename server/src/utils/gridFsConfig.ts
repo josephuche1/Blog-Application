@@ -19,3 +19,11 @@ const upload = multer({ storage }); // create an instance of the multer middlewa
 
 export default upload; // export the upload middleware
 
+export const getGfs = () => {
+    if(!gfs){
+        console.log("GridFSBucket is not initialized");
+        return null;
+    }
+    return gfs;
+}
+

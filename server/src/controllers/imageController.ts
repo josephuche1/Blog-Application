@@ -1,6 +1,8 @@
 import { RequestHandler } from "express";
+import { IImage } from "../models/interfaceModels";
+import { getGfs } from "../utils/gridFsConfig";
 
-
+const gfs = getGfs(); // get the GridFSBucket object
 
 // create function to handle image upload
 export const imageUpload: RequestHandler = (req, res, next) => {
@@ -18,3 +20,22 @@ export const imageUpload: RequestHandler = (req, res, next) => {
         next(err); // pass the error to the error handling middleware
     }
 };
+
+// create function to handle image delete
+export const imageDelete: RequestHandler<unknown, unknown, IImage, unknown> = (req, res, next) => {
+    const {images} = req.body;
+    try{
+        if(images.length === 0){
+            return res.json({msg: "No images to delete"}); // send a response if no images were provided
+        }
+        images.forEach(async (image: string) => {
+            const file = await gfs?.find({filename: image}).toArray(); // find the file in the database
+            if(file && file.length !== 0){ // check if the file exists
+                await gfs?.delete(file[0]._id); // delete the file from the database
+            }
+        })
+        res.json({msg: "Images deleted successfully"});
+    } catch(err){
+        next(err); // pass the error to the error handling middleware
+    }
+}

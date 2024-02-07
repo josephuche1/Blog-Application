@@ -1,5 +1,9 @@
-import { RequestHandler } from "express";
-import Post from "../models/postSchema";
+import { RequestHandler } from "express"; // import RequestHandler interface from express
+import Post from "../models/postSchema"; // import the post model
+import { IPost } from "../models/interfaceModels"; // import the IPost interface from the interfaceModels file
+import User from "../models/userSchema"; // import the user model
+import { Error } from "mongoose"; // import the Error interface from mongoose
+import {TPost} from "../models/postSchema"; // import the TPost type from the postSchema file
 
 // create function to get a specific post by id
 export const getPost: RequestHandler = async (req, res, next) => {
@@ -37,6 +41,56 @@ export const getPosts: RequestHandler = async (req, res, next) => {
 };
 
 // create function to create a new post
-export const createPost: RequestHandler = async (req, res, next) => {
+export const createPost: RequestHandler<unknown, unknown, IPost, unknown> = async (req, res, next) => {
+    const {author, text, images} = req.body; // destructure the author and text from the request body 
+    try{
+        const author = await User.findById(req.user); // find the user by id
+        if(author){ // check if the user was found
+            const newPost = new Post({
+                author: author.username, // set the author of the post to the user's username
+                text,
+                images,
+            });
+            await newPost.save(); // save the new post
+            author.posts.push(newPost._id); // add the new post to the user's posts
+            await author.save(); // save the user
+            res.json({message: "Post created successfully", post: newPost}); // send a response if the post was created successfully
+        } else{
+            res.json({isAuthenticated: false, message: " User not found"}); // send a response if the user is not authenticated
+        }
+
+    } catch(err){
+        next(err); // pass the error to the error handling middleware
+    }
     
 }
+
+// create function to delete a post
+export const deletePost: RequestHandler = async (req, res, next) => {
+    try{
+        Post.findByIdAndDelete(req.params.id, (err: Error, post: TPost) => { // find a post by id and delete it
+            if(err){
+                res.json({message: "Post not found"}); // send a response if the post was not found
+            }
+            else{
+                res.json({message: "Post deleted successfully"}); // send a response if the post was deleted successfully
+            }
+        });
+    } catch(err){
+        next(err); // pass the error to the error handling middleware
+    }
+};
+
+// create function to get post images, if any
+export const getPostImages: RequestHandler = async (req, res, next) => {
+    try{
+        const post = await Post.findById(req.params.id); // find a post by id
+        if(post){
+            res.json({images: post.images}); // send a response with the images of the post
+        } else{
+            res.json({message: "Post not found"}); // send a response if the post was not found
+        }
+    } catch(err){
+        next(err); // pass the error to the error handling middleware
+    }
+};
