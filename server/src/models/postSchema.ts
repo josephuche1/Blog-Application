@@ -2,6 +2,7 @@ import { InferSchemaType, Schema, model } from "mongoose";
 
 
 const postSchema = new Schema({
+    author: {type: String, required: true},
     text: {type: String, default: ""},
     likes: {type: Number, default: 0},
     comments: {type:[String], default: []},

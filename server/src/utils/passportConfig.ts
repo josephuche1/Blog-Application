@@ -1,5 +1,5 @@
 import express from 'express';
-import env from '../utils/validateEnv';
+import env from './validateEnv';
 import session from 'express-session';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';

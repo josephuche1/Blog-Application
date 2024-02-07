@@ -3,7 +3,7 @@ import env from "./utils/validateEnv"; // import the validateEnv function to val
 import express, {Request, Response, NextFunction} from "express"; // import the express module for the server
 import userRoute from "./routes/userRoutes"; // import the user route
 import postRoute from "./routes/postRoutes"; // import the post route
-import passportConfig from "./config/passportConfig"; // import the passport configuration
+import passportConfig from "./utils/passportConfig"; // import the passport configuration
 
 const app = express(); // create an instance of express
 
@@ -20,7 +20,7 @@ const userAuth = (error: unknown, req: Request, res: Response, next: NextFunctio
         errorMessage = error.message;
     }
     console.error(error);
-    res.json({isAuthenticated: false, error: errorMessage});
+    res.json({error: errorMessage});
     next();
 }
 app.use(userAuth); // use the userAuth middleware

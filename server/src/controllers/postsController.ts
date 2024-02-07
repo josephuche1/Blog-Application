@@ -20,3 +20,23 @@ export const getPost: RequestHandler = async (req, res, next) => {
         next(error);
     }
 };
+
+// create function to get all posts
+export const getPosts: RequestHandler = async (req, res, next) => {
+    try{
+        const posts = await Post.find({});
+        if(posts.length !== 0){
+           res.json(posts);
+        }
+        else{
+          res.json({message: "No posts yet"});
+        }
+    } catch(err){
+         next(err);
+    }
+};
+
+// create function to create a new post
+export const createPost: RequestHandler = async (req, res, next) => {
+    
+}
