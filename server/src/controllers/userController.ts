@@ -65,3 +65,13 @@ export const LogoutUser: RequestHandler = (req, res) => {
         res.json({isAuthenticated: false, user: null, msg: EServerResponseStatus.SUCCESS}); // send a response with the user set to null
     });
 }
+
+// create a function to check if a user is authenticated. This function will be used as a middleware in the route
+export const CheckUser: RequestHandler = (req, res) => {
+    if(req.isAuthenticated()){ // check if the user is authenticated
+        res.json({isAuthenticated: true, user: req.user, msg: EServerResponseStatus.SUCCESS}); // send a response with the user's details
+    }
+    else{
+        res.json({isAuthenticated: false, user: null, msg: EServerResponseStatus.NOT_AUTHENTICATED}); // send a response if the user is not authenticated
+    }
+};

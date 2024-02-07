@@ -108,7 +108,7 @@ export const likePost: RequestHandler = async (req, res, next) => {
                 post.likes -= 1; // decrement the likes of the post by 1
                 await post.save(); // save the post
                 user.likedPosts = user.likedPosts.filter(id => id !== post._id); // remove the post from the user's liked posts
-                user.save(); // save the user
+                await user.save(); // save the user
                 return res.json({action: EUserActions.UNLIKE, msg: EServerResponseStatus.SUCCESS}); // send a response if the post was unliked successfully
             }
             post.likes += 1; // increment the likes of the post by 1
