@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import { IImage } from "../models/interfaceEnumsTypes";
+import { IImage } from "../utils/interfaceEnumsTypes";
 import { gfs } from "../server";
-import { EServerResponseStatus } from "../models/interfaceEnumsTypes";
+import { EServerResponseStatus } from "../utils/interfaceEnumsTypes";
 
 // create function to handle image upload
 export const imageUpload: RequestHandler = (req, res, next) => {

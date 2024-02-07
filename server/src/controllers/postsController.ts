@@ -1,10 +1,10 @@
 import { RequestHandler } from "express"; // import RequestHandler interface from express
 import Post from "../models/postSchema"; // import the post model
-import { IPost } from "../models/interfaceEnumsTypes"; // import the IPost interface from the interfaceModels file
+import { IPost } from "../utils/interfaceEnumsTypes"; // import the IPost interface from the interfaceModels file
 import User from "../models/userSchema"; // import the user model
 import { Error } from "mongoose"; // import the Error interface from mongoose
 import {TPost} from "../models/postSchema"; // import the TPost type from the postSchema file
-import { EUserActions, EServerResponseStatus } from "../models/interfaceEnumsTypes"; // import the EUserActions enum from the interfaceModels file
+import { EUserActions, EServerResponseStatus } from "../utils/interfaceEnumsTypes"; // import the EUserActions enum from the interfaceModels file
 
 // create function to get a specific post by id
 export const getPost: RequestHandler = async (req, res, next) => {

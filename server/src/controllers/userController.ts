@@ -1,8 +1,8 @@
 import { RequestHandler } from "express"; // import the RequestHandler type from the express module
 import User from "../models/userSchema"; // import the User model
 import passport from "passport"; // import the passport module
-import { IRegisterUser, ILoginUser } from "../models/interfaceEnumsTypes"; // import the IRegisterUser and ILoginUser interfaces
-import { EServerResponseStatus } from "../models/interfaceEnumsTypes";
+import { IRegisterUser, ILoginUser } from "../utils/interfaceEnumsTypes"; // import the IRegisterUser and ILoginUser interfaces
+import { EServerResponseStatus } from "../utils/interfaceEnumsTypes";
 
 // create a function to register a user. This function will be used as a middleware in the route
 export const registerUser: RequestHandler<unknown, unknown, IRegisterUser, unknown> = async (req, res, next) => {
