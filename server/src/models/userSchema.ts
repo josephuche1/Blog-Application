@@ -10,7 +10,7 @@ const userSchema = new Schema({ // create a new schema for the user model
     facebookId: String,
     posts:{type: [String], default: []},
     profilePicture: String,
-    likedPosts: {type: [String], default: []},
+    likedPosts: {type: [ObjectId], default: []},
 });
 
 userSchema.plugin(passportLocalMongoose); // use the passport-local-mongoose plugin to hash and salt the password
@@ -23,7 +23,7 @@ export interface IUser extends Document { // create an interface for the user mo
     facebookId?: string;
     posts: ObjectId[];
     profilePicture?: string;
-    likedPosts: string[];
+    likedPosts: ObjectId[];
 }  
 
 const User  = model<IUser>("User", userSchema); // create the user model

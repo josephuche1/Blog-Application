@@ -17,8 +17,24 @@ export interface IPost { // create an interface for the post model
     images?: string[],
 }
 
-
 // Interface models for the image models
 export interface IImage{
     images: string[]
+}
+
+// Enum for user actions
+export enum EUserActions {
+    LIKE="like",
+    UNLIKE="unlike",
+}
+
+// Enum for server response status
+export enum EServerResponseStatus {
+    SUCCESS="success",
+    ERROR="error",
+    NOT_FOUND="not found",
+    NOT_AUTHENTICATED="not authenticated",
+    NO_FILES="no files",
+    EXISTING_USERNAME="Username already exists",
+    EXISTING_EMAIL="Email already exists",
 }

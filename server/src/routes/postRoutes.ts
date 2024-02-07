@@ -8,6 +8,6 @@ router.post("/create", postController.createPost); // create a route to create a
 router.delete("/delete/:id", postController.deletePost); // create a route to delete a post by id
 router.get("/", postController.getPosts); // create a route to get all posts
 router.get("/getImages/:id", postController.getPostImages); // create a route to get post images, if any
-
+router.get("like/:id/:username", postController.likePost); // create a route to like a post
 
 export default router; // export the router instance

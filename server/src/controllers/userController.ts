@@ -1,8 +1,8 @@
 import { RequestHandler } from "express"; // import the RequestHandler type from the express module
 import User from "../models/userSchema"; // import the User model
 import passport from "passport"; // import the passport module
-import { IRegisterUser, ILoginUser } from "../models/interfaceModels"; // import the IRegisterUser and ILoginUser interfaces
-
+import { IRegisterUser, ILoginUser } from "../models/interfaceEnumsTypes"; // import the IRegisterUser and ILoginUser interfaces
+import { EServerResponseStatus } from "../models/interfaceEnumsTypes";
 
 // create a function to register a user. This function will be used as a middleware in the route
 export const registerUser: RequestHandler<unknown, unknown, IRegisterUser, unknown> = async (req, res, next) => {
@@ -12,12 +12,12 @@ export const registerUser: RequestHandler<unknown, unknown, IRegisterUser, unkno
         const user = new User({email, username}); // create a new user with the email and username
          const existingUsername = await User.findOne({username}) // check if the username already exists
          if(existingUsername){
-             return res.json({isAuthenticated: false, error: "Username already exists"}); // send a response if the username already exists
+             return res.json({isAuthenticated: false, msg: EServerResponseStatus.EXISTING_USERNAME }); // send a response if the username already exists
          }
 
          const existingEmail = await User.findOne({email}); // check if the email already exists
          if(existingEmail){
-                return res.json({isAuthenticated: false, error: "Email already exists"}); // send a response if the email already exists
+                return res.json({isAuthenticated: false, msg: EServerResponseStatus.EXISTING_EMAIL}); // send a response if the email already exists
          }
          
 
@@ -26,7 +26,7 @@ export const registerUser: RequestHandler<unknown, unknown, IRegisterUser, unkno
                 return next(err); // pass the error to the error handling middleware
             }
             passport.authenticate("local")(req, res, () => { // authenticate the user
-                res.json({isAuthenticated: true, user: {email, username}}); // send a response with the user's email and username
+                res.json({isAuthenticated: true, user: {email, username}, msg: EServerResponseStatus.SUCCESS}); // send a response with the user's email and username
             });
         });
      } catch(err){
@@ -46,11 +46,11 @@ export const LoginUser: RequestHandler<unknown, unknown, ILoginUser, unknown> = 
 
         req.login(user, (err) => { // login the user
             if(err){ // check if there is an error
-                res.json({isAuthenticated: false, error: err.message}); // send a response with the error message
+                res.json({isAuthenticated: false, msg: EServerResponseStatus.ERROR}); // send a response with the error message
             }
             else{
                 passport.authenticate("local")(req, res, () => { // authenticate the user
-                    res.json({isAuthenticated: true, user: {username}}); // send a response with the user's username
+                    res.json({isAuthenticated: true, user: username, msg: EServerResponseStatus.SUCCESS}); // send a response with the user's username
                 });
             }
         })
@@ -62,6 +62,6 @@ export const LoginUser: RequestHandler<unknown, unknown, ILoginUser, unknown> = 
 // create a function to logout a user. This function will be used as a middleware in the route
 export const LogoutUser: RequestHandler = (req, res) => {
     req.logout(() => { // logout the user
-        res.json({isAuthenticated: false, user: null}); // send a response with the user set to null
+        res.json({isAuthenticated: false, user: null, msg: EServerResponseStatus.SUCCESS}); // send a response with the user set to null
     });
 }
