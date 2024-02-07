@@ -4,6 +4,7 @@ import express, {Request, Response, NextFunction} from "express"; // import the 
 import userRoute from "./routes/userRoutes"; // import the user route
 import postRoute from "./routes/postRoutes"; // import the post route
 import passportConfig from "./utils/passportConfig"; // import the passport configuration
+import imageRoute from "./routes/imageRoutes"; // import the image route
 
 const app = express(); // create an instance of express
 
@@ -11,6 +12,7 @@ passportConfig(app); // configure passport
 
 app.use("/user", userRoute); // use the user route
 app.use("/api/posts", postRoute); // use the post route
+app.use("/api/images", imageRoute); // use the image route
 
 
 // create a middleware to handle errors
