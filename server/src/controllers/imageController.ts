@@ -1,8 +1,6 @@
 import { RequestHandler } from "express";
 import { IImage } from "../models/interfaceModels";
-import { getGfs } from "../utils/gridFsConfig";
-
-const gfs = getGfs(); // get the GridFSBucket object
+import { gfs } from "../server";
 
 // create function to handle image upload
 export const imageUpload: RequestHandler = (req, res, next) => {

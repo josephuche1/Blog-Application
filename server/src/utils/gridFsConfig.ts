@@ -5,13 +5,15 @@ import {GridFSBucket} from 'mongodb'; // import the GridFSBucket class from the 
 import { storage } from './storageSetUp'; // import the storage object from the storageSetUp module
 
 
-let gfs: GridFSBucket; // create a variable to store the GridFSBucket object
 
-export const initializeGridFs = () => { // create a function to initialize the GridFSBucket
+
+export const initializeGridFs = (gfs: GridFSBucket) => { // create a function to initialize the GridFSBucket
+    
     conn.once('open', () => { // listen for the open event on the connection
         gfs = new GridFSBucket(conn.db, { // create a new instance of the GridFSBucket class
             bucketName: env.BUCKET_NAME
         });
+        
     });
 };
 
@@ -19,11 +21,5 @@ const upload = multer({ storage }); // create an instance of the multer middlewa
 
 export default upload; // export the upload middleware
 
-export const getGfs = () => {
-    if(!gfs){
-        console.log("GridFSBucket is not initialized");
-        return null;
-    }
-    return gfs;
-}
+
 

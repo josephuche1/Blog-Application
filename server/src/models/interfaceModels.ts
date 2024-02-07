@@ -10,7 +10,6 @@ export interface ILoginUser { // create an interface for the login user model
     password: string;
 }
 
-
 //  Interface models for the post models
 export interface IPost { // create an interface for the post model
     author: string,
