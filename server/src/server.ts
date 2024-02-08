@@ -5,8 +5,6 @@ import mongoose, {Error} from "mongoose"; // import the mongoose module for mong
 import {initializeGridFs} from "./utils/gridFsConfig"; // import the initializeGridFs function to initialize the GridFSBucket
 import {GridFSBucket} from "mongodb"; // import the GridFSBucket class from the mongodb module
 
-import User from "./models/userSchema"; // import the user schema
-import Post from "./models/postSchema"; // import the post schema
 
 const port = env.PORT; // port number
 let gfs: GridFSBucket; // create a variable to store the GridFSBucket object

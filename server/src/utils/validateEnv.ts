@@ -6,4 +6,6 @@ export default cleanEnv(process.env, { // validate the environment variables
   SECRET: str(),
   PORT: port(),
   BUCKET_NAME: str(),
+  PUBLIC_VAPID_KEY: str(),
+  PRIVATE_VAPID_KEY: str()
 });

@@ -5,6 +5,7 @@ import userRoute from "./routes/userRoutes"; // import the user route
 import postRoute from "./routes/postRoutes"; // import the post route
 import passportConfig from "./utils/passportConfig"; // import the passport configuration
 import imageRoute from "./routes/imageRoutes"; // import the image route
+import webpush from "web-push"; // import the web-push module for push notifications
 
 const app = express(); // create an instance of express
 
@@ -26,5 +27,10 @@ const errorHandling = (error: unknown, req: Request, res: Response, next: NextFu
     next(); // call the next function
 }
 app.use(errorHandling); // use the errorHandling middleware
+
+const publicVapidKey = env.PUBLIC_VAPID_KEY; // public vapid key
+const privateVapidKey = env.PRIVATE_VAPID_KEY; // private vapid key
+
+
 
 export default app; // export the app instance
